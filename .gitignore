@@ -43,6 +43,7 @@ Thumbs.db
 !/tmp/locks/.gitkeep
 
 #vichan custom
+Backup/
 favicon.ico
 /static/spoiler.png
 /local-instances
