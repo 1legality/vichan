@@ -366,16 +366,25 @@ span.heading {
 }
 
 /* ===== CATALOG ===== */
-.thread-catalog {
+.theme-catalog div.thread {
     background: linear-gradient(135deg, rgba(20, 20, 35, 0.9), rgba(15, 15, 25, 0.9));
     border: 1px solid #1a1a2e;
     border-radius: 4px;
-    transition: border-color 0.3s ease;
+    color: #d5d5e0;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.thread-catalog:hover {
+.theme-catalog div.thread:hover {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.95), rgba(25, 25, 40, 0.95));
     border-color: #9b32ff;
     box-shadow: 0 0 10px rgba(155, 50, 255, 0.15);
+    color: #e0e0f0;
+}
+
+.theme-catalog div.thread img {
+    background: #808080;
+    border-radius: 3px;
+    padding: 4px;
 }
 
 /* ===== SCROLLBAR (Webkit) ===== */
