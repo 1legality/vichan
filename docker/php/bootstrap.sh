@@ -9,7 +9,7 @@ function set_cfg() {
         cp "/code/inc/$1" "/var/www/inc/$1"
         chown www-data "/var/www/inc/$1"
         chgrp www-data "/var/www/inc/$1"
-        chmod 600 "/var/www/inc/$1"
+        chmod 660 "/var/www/inc/$1"
     else
         echo "INFO: Using existing $1"
     fi
@@ -67,12 +67,14 @@ ln -nfs -T /var/cache/gen-cache /var/www/tmp/cache
 chown -h www-data /var/www/tmp/cache
 chgrp -h www-data /var/www/tmp/cache
 
-# Create the included files directory and link them
-install -d -m 700 -o www-data -g www-data /var/www/inc
+# Create the included files directory and link them.
+# Force-refresh existing symlinks so code changes propagate on rebuild,
+# but preserve real files (e.g., user-modified instance-config.php).
+install -d -m 770 -o www-data -g www-data /var/www/inc
 for file in /code/inc/*; do
     file="${file##*/}"
-    if [ ! -e /var/www/inc/$file ]; then
-        ln -s /code/inc/$file /var/www/inc/
+    if [ ! -e /var/www/inc/$file ] || [ -L /var/www/inc/$file ]; then
+        ln -nfs /code/inc/$file /var/www/inc/
     fi
 done
 
