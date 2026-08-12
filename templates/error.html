@@ -1,7 +1,9 @@
 <main class="cyber-error" aria-labelledby="error-title">
 	<img class="cyber-error__banner" src="/static/banners/site_de_marde_banner.png" alt="Site de Marde">
-	<h1 class="cyber-error__code" id="error-title">{{ status }}</h1>
-	<a href="/sdm/">Return to /sdm/</a>
+	<div class="cyber-error__content">
+		<h1 class="cyber-error__code" id="error-title">{{ status }}</h1>
+		<a href="/sdm/">Return to /sdm/</a>
+	</div>
 {% if debug and config.debug %}
 	<hr>
 	<h3>{% trans %}Error information{% endtrans %}</h3>
