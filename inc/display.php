@@ -101,7 +101,19 @@ function error($message, $priority = true, $debug_stuff = []) {
 		)));
 	}
 	else {
-		header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+		$status = http_response_code();
+		if ($status < 400) {
+			if (in_array($message, array($config['error']['404'], $config['error']['noboard'], $config['error']['nonexistant'], $config['error']['invalidpost']), true)) {
+				$status = 404;
+			}
+			elseif (in_array($message, array($config['error']['notamod'], $config['error']['noaccess']), true)) {
+				$status = 403;
+			}
+			else {
+				$status = 400;
+			}
+		}
+		http_response_code($status);
 	}
 
 	$pw = $config['db']['password'];
@@ -118,11 +130,13 @@ function error($message, $priority = true, $debug_stuff = []) {
 
 	die(Element($config['file_page_template'], array(
 		'config' => $config,
-		'title' => _('Error'),
-		'subtitle' => _('An error has occured.'),
+		'error_page' => true,
+		'title' => sprintf(_('Error %d'), $status),
+		'subtitle' => _('The signal was interrupted.'),
 		'body' => Element($config['file_error'], array(
 			'config' => $config,
 			'message' => $message,
+			'status' => $status,
 			'mod' => $mod,
 			'board' => isset($board) ? $board : false,
 			'debug' => $config['debug'] ? (is_array($debug_stuff) ? str_replace("\n", '&#10;', utf8tohtml(print_r($debug_stuff, true))) : utf8tohtml($debug_stuff)) : null
