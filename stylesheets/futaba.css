@@ -4,6 +4,14 @@ body {
 	font-family: serif;
 	font-size: 16px;
 }
+body .media-viewer {
+	--viewer-surface: #f0e0d6;
+	--viewer-border: #d9bfb7;
+	--viewer-control: #ffffee;
+	--viewer-text: #800000;
+	--viewer-muted: #800000;
+	--viewer-accent: #800000;
+}
 div.title h1 {
 	font-size: 24px;
 }

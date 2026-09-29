@@ -1,5 +1,13 @@
 /*https://github.com/turanga/Tinyboard/blob/efe78b81c1ffca32bcf9601d0e3877bb65c70df1/stylesheets/photon.css*/
 
+body .media-viewer {
+    --viewer-surface: #ddd;
+    --viewer-border: #aaa;
+    --viewer-control: #eee;
+    --viewer-text: #002244;
+    --viewer-muted: #004a99;
+    --viewer-accent: #006ab9;
+}
 
 .floatiframe{
 float:left;

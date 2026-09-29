@@ -127,6 +127,11 @@ html.media-viewer-open {
 }
 
 .media-viewer-stage {
+	/* Keep loading text, focus and scrollbars legible inside the dark stage. */
+	--viewer-muted: #bbb;
+	--viewer-accent: #ddd;
+	--viewer-border: #777;
+	color: #eee;
 	position: relative;
 	display: grid;
 	place-items: center;

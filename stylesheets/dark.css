@@ -10,6 +10,15 @@ body {
 }
 
 /* Keep attachment controls legible against dark replies. */
+body .media-viewer {
+	--viewer-surface: #333;
+	--viewer-border: #777;
+	--viewer-control: #1e1e1e;
+	--viewer-text: #ccc;
+	--viewer-muted: #bbb;
+	--viewer-accent: #32dd72;
+}
+
 body div.files.attachment-carousel {
 	--carousel-image-background: #808080;
 	--carousel-surface: #1e1e1e;
