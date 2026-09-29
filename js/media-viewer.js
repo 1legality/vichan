@@ -399,8 +399,13 @@
 	function finish() {
 		// A deferred close event can arrive after the viewer has reopened.
 		if (dialog.open) return;
-		var selected = items[index] && items[index].link;
-		var target = visible(selected) ? selected : (visible(origin) ? origin : priorFocus);
+		var item = items[index];
+		var selected = item && item.link;
+		var group = item && item.group;
+		var focusTarget = group && group.querySelector('.attachment-carousel-thumbnail[aria-current="true"]');
+		if (!visible(focusTarget)) focusTarget = group && group.querySelector('.attachment-carousel-caption a');
+		if (!visible(focusTarget)) focusTarget = group && group.querySelector('.attachment-carousel-toggle');
+		var target = visible(focusTarget) ? focusTarget : (visible(selected) ? selected : (visible(origin) ? origin : priorFocus));
 		clearMedia();
 		clearThumbnails();
 		items = [];
