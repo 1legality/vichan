@@ -244,7 +244,7 @@
 				var info = active.querySelector('.fileinfo');
 				active.insertBefore(controls, info);
 				active.insertBefore(rail, info);
-				active.insertBefore(caption, info);
+				active.insertBefore(caption, controls);
 			}
 			updateCaption(active);
 			controls.hidden = rail.hidden = caption.hidden = state.all;
