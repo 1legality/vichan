@@ -11,6 +11,7 @@
 	var thumbnailButtons = [], thumbnailCleanups = [], thumbnailGeneration = 0;
 	var origin = null, priorFocus = null, scroll = null, backdropStart = null, swipeStart = null;
 	var historyEntry = null, historySerial = 0, pendingHistoryBack = false, queuedOpen = null;
+	var keyboardFocus = true, pointerFocusTarget = null;
 
 	function httpURL(value, base) {
 		try {
@@ -450,6 +451,26 @@
 		return node && node.isConnected && node.getClientRects().length;
 	}
 
+	function clearPointerFocus() {
+		if (!pointerFocusTarget) return;
+		pointerFocusTarget.classList.remove('media-viewer-pointer-return');
+		pointerFocusTarget.removeEventListener('blur', clearPointerFocus);
+		pointerFocusTarget = null;
+	}
+
+	function restoreFocus(target) {
+		clearPointerFocus();
+		if (!visible(target) || typeof target.focus !== 'function') return;
+		// Keep the return position without inheriting a dialog's keyboard focus ring.
+		if (!keyboardFocus) {
+			pointerFocusTarget = target;
+			target.classList.add('media-viewer-pointer-return');
+			target.addEventListener('blur', clearPointerFocus);
+		}
+		target.focus({ preventScroll: true });
+		if (document.activeElement !== target) clearPointerFocus();
+	}
+
 	function finish() {
 		// A deferred close event can arrive after the viewer has reopened.
 		if (dialog.open) return;
@@ -467,7 +488,7 @@
 		items = [];
 		backdropStart = null;
 		document.documentElement.classList.remove('media-viewer-open');
-		if (visible(target) && typeof target.focus === 'function') target.focus({ preventScroll: true });
+		restoreFocus(target);
 		if (scroll) window.scrollTo({ left: scroll.x, top: scroll.y, behavior: 'instant' });
 		origin = priorFocus = scroll = null;
 		historyEntry = null;
@@ -611,6 +632,12 @@
 
 	window.VichanMediaViewer = { open: open, openAll: openAll };
 	if (!supported) return;
+	document.addEventListener('pointerdown', function() { keyboardFocus = false; }, true);
+	document.addEventListener('keydown', function(e) {
+		if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+		keyboardFocus = true;
+		clearPointerFocus();
+	}, true);
 	window.addEventListener('popstate', function(e) {
 		pendingHistoryBack = false;
 		if (!restoreHistory(viewerState(e.state)) && dialog && dialog.open) {
@@ -632,6 +659,8 @@
 			if (attachment(link)) e.stopImmediatePropagation();
 			return;
 		}
+		// Keyboard and assistive-technology activations can arrive without a keydown.
+		if (e.detail === 0) keyboardFocus = true;
 		var opened = link.matches('#expand-all-images a') ? openAll() : open(link);
 		if (!opened) return;
 		e.preventDefault();

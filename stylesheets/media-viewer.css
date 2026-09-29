@@ -3,6 +3,11 @@ html.media-viewer-open {
 	overflow: hidden;
 }
 
+/* Only suppress a pointer-restored outline; keyboard input removes this marker. */
+:root .media-viewer-pointer-return:focus {
+	outline: none;
+}
+
 .media-viewer {
 	--viewer-surface: #181818;
 	--viewer-border: #444;
