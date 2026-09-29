@@ -56,6 +56,7 @@ $main_js = $config['file_script'];
 
 $boards = listBoards();
 
+// Keep database rows separate from the global board initialized by openBoard().
 foreach($boards as $boardData) {
 	if($options['board'] && $boardData['uri'] != $options['board'])
 		continue;
@@ -64,7 +65,10 @@ foreach($boards as $boardData) {
 		echo "Opening board /{$boardData['uri']}/...\n";
 	// Reset locale to global locale
 	$config['locale'] = $global_locale;
-	openBoard($boardData['uri']);
+	if (!openBoard($boardData['uri'])) {
+		fwrite(STDERR, "Could not open board /{$boardData['uri']}/.\n");
+		exit(1);
+	}
 	$config['try_smarter'] = false;
 	
 	if($config['file_script'] != $main_js) {
@@ -74,15 +78,8 @@ foreach($boards as $boardData) {
 		buildJavascript();
 	}
 	
-	
-	if(!$options['quiet'])
-		echo "Creating index pages...\n";
-	buildIndex();
-	
-	if($options['quick'])
-		continue; // do no more
-	
-	if($options['full']) {
+	// Update post markup before rendering the index containing those posts.
+	if($options['full'] && !$options['quick']) {
 		$query = query(sprintf("SELECT `id` FROM ``posts_%s``", $board['uri'])) or error(db_error());
 		while($post = $query->fetch()) {
 			if(!$options['quiet'])
@@ -90,6 +87,19 @@ foreach($boards as $boardData) {
 			rebuildPost($post['id']);
 		}
 	}
+
+	// A manual rebuild must also reflect template changes when posts are unchanged.
+	if ($config['cache']['enabled']) {
+		for ($page = 1; $page <= $config['max_pages']; $page++) {
+			Cache::delete('_index_hashed_' . $board['uri'] . '_' . $page);
+		}
+	}
+	if(!$options['quiet'])
+		echo "Creating index pages...\n";
+	buildIndex();
+
+	if($options['quick'])
+		continue; // do no more
 	
 	$query = query(sprintf("SELECT `id` FROM ``posts_%s`` WHERE `thread` IS NULL", $board['uri'])) or error(db_error());
 	while($post = $query->fetch()) {

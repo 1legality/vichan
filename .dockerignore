@@ -1,4 +1,13 @@
 **/.git
 **/.gitignore
 /local-instances
+/restauration-vichan
 **/.gitkeep
+/.env
+/.env.*
+/inc/secrets.php
+/vendor
+/templates/cache
+/tmp
+/.agents
+/.codex

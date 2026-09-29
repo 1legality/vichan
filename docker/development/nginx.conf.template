@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    server_name localhost;
+    root /var/www;
+    index index.html index.php;
+    charset utf-8;
+    client_max_body_size 10m;
+    add_header Cache-Control "no-store" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    location ~ /\. { deny all; }
+    location ~ ^/(inc|vendor|templates|tools|tmp|docker)(/|$) { deny all; }
+    location = /install.sql { deny all; }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME /var/www$fastcgi_script_name;
+        fastcgi_pass @PHP_HOST@:9000;
+    }
+}

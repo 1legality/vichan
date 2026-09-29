@@ -123,10 +123,24 @@ WebM support
 ------------
 Read `inc/lib/webm/README.md` for information about enabling webm.
 
+macOS development
+-----------------
+On a Mac with Apple silicon and macOS 26 or later, use [Apple container](https://github.com/apple/container) to run the Linux development environment:
+
+```sh
+./tools/dev.sh up
+```
+
+The application runs at [http://127.0.0.1:9080](http://127.0.0.1:9080). For a fresh instance, complete `/install.php`, then open `/b/`. Existing restored instances keep their own boards and accounts; do not run the fresh installer over restored data.
+
+Edit the checkout on your Mac. PHP, nginx, MySQL and Redis run in containers; host PHP, Composer and Docker Desktop are not required. Regenerate board HTML and JavaScript with `./tools/dev.sh rebuild`, verify the environment with `./tools/dev.sh check`, and stop it with `./tools/dev.sh down`. Stopping preserves local data.
+
+See the [Mac development guide](docker/development.md) for requirements, configuration, commands and restoration. Private backups in `restauration-vichan/` and runtime data in `local-instances/` are excluded from Git and container build contexts. Repository working conventions are in [AGENTS.md](AGENTS.md).
+
 Docker
 ------------
 Vichan comes with a Dockerfile and docker-compose configuration, the latter aimed primarily at development and testing.
-See the `docker/doc.md` file for more information.
+See the [Docker and Podman guide](docker/doc.md) for more information.
 
 vichan API
 ----------
