@@ -1,4 +1,12 @@
-<a href="
+{% set media_type = 'file' %}
+{% if post.thumb != 'file' and post.modifiers['is_file'] != '1' %}
+	{% if post.file|extension in ['webm', 'mp4', 'ogv'] %}
+		{% set media_type = 'video' %}
+	{% elseif post.file|extension in ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp', 'svg'] and post.file|extension not in config.allowed_ext_files|default([]) %}
+		{% set media_type = 'image' %}
+	{% endif %}
+{% endif %}
+<a data-media-type="{{ media_type }}" href="
 	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' %}
 		{{ config.root }}player.php?v={{ config.uri_img }}{{ post.file }}&amp;t={% if config.show_filename %}{{ post.filename|e('url') }}{% else %}{{ post.file }}{% endif %}&amp;loop=1
 	{% else %}
@@ -6,7 +14,7 @@
 	{% endif %}
 	"
 	 target="_blank"
-	{% if post.file|extension in ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp', 'svg'] and post.file|extension not in config.allowed_ext_files|default([]) and post.thumb != 'file' and post.modifiers['is_file'] != '1' %}
+	{% if media_type == 'image' %}
 		 data-seasonal-photo="{% if post.thumb == 'spoiler' %}spoiler{% else %}true{% endif %}"
 	{% endif %}
 	{% if post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension == 'webm' or post.file|extension == 'mp4' %}
