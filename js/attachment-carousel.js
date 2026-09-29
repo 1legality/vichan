@@ -109,26 +109,24 @@
 
 		function navigation(direction, text, action) {
 			var node = button(controls, '', text + ' attachment', 'attachment-carousel-' + direction, action);
-			var icon = ui('i', 'fa fa-chevron-' + (direction === 'previous' ? 'left' : 'right'));
+			var icon = ui('span', 'attachment-carousel-chevron');
 			icon.setAttribute('aria-hidden', 'true');
-			var caption = ui('span', 'attachment-carousel-navigation-label');
-			caption.textContent = text;
-			if (direction === 'previous') node.appendChild(icon);
-			node.appendChild(caption);
-			if (direction === 'next') node.appendChild(icon);
+			node.appendChild(icon);
 			return node;
 		}
 
 		var previous = navigation('previous', 'Previous', function() { move(state.index - 1); });
+		var rail = ui('div', 'attachment-carousel-thumbnails');
+		rail.setAttribute('role', 'group');
+		rail.setAttribute('aria-label', 'Choose attachment');
+		rail.style.setProperty('--attachment-carousel-columns', Math.min(files.length, 5));
+		controls.appendChild(rail);
+		var next = navigation('next', 'Next', function() { move(state.index + 1); });
 		var counter = ui('span', 'attachment-carousel-counter');
 		counter.setAttribute('role', 'status');
 		counter.setAttribute('aria-live', 'polite');
 		counter.setAttribute('aria-atomic', 'true');
 		controls.appendChild(counter);
-		var next = navigation('next', 'Next', function() { move(state.index + 1); });
-		var rail = ui('div', 'attachment-carousel-thumbnails');
-		rail.setAttribute('role', 'group');
-		rail.setAttribute('aria-label', 'Choose attachment');
 		var caption = ui('p', 'attachment-carousel-caption');
 		var thumbnails = files.map(function(file, index) {
 			var thumb = file.querySelector('img.post-image, video.post-image');
@@ -256,6 +254,19 @@
 			caption.appendChild(filename);
 		}
 
+		function revealThumbnail() {
+			if (single || state.all || !rail.clientWidth) return;
+			var selected = thumbnails[state.index].getBoundingClientRect();
+			var left = rail.getBoundingClientRect().left + rail.clientLeft;
+			var right = left + rail.clientWidth;
+			var style = getComputedStyle(rail);
+			left += parseFloat(style.paddingLeft) || 0;
+			right -= parseFloat(style.paddingRight) || 0;
+			// Scroll only the filmstrip, keeping the post and its media in place.
+			if (selected.left < left) rail.scrollLeft -= left - selected.left;
+			else if (selected.right > right) rail.scrollLeft += selected.right - right;
+		}
+
 		function render() {
 			var focused = document.activeElement;
 			var keepFocus = controls.contains(focused) || rail.contains(focused);
@@ -275,10 +286,7 @@
 			var active = files[state.index];
 			if (caption.parentNode !== active) {
 				active.appendChild(caption);
-				if (!single) {
-					active.appendChild(controls);
-					active.appendChild(rail);
-				}
+				if (!single) active.appendChild(controls);
 			}
 			updateCaption(active);
 			controls.hidden = rail.hidden = single || state.all;
@@ -290,6 +298,7 @@
 			toggle.setAttribute('aria-pressed', String(state.all));
 			if (!state.all) {
 				if (keepFocus && focused !== document.activeElement) focused.focus({ preventScroll: true });
+				revealThumbnail();
 			}
 		}
 
@@ -328,11 +337,7 @@
 		group.classList.add('attachment-carousel');
 		if (!single) group.insertBefore(header, group.firstChild);
 		render();
-		// Styles can only be resolved after the controls are in the document.
-		if (!single) {
-			var iconStyle = getComputedStyle(previous.querySelector('.fa'), '::before');
-			group.classList.toggle('attachment-carousel-icons', iconStyle.content !== 'none' && iconStyle.content !== 'normal' && iconStyle.fontFamily.indexOf('FontAwesome') !== -1);
-		}
+		if (!single && window.ResizeObserver) new ResizeObserver(revealThumbnail).observe(rail);
 	}
 
 	function init(root) {

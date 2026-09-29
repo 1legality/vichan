@@ -8,7 +8,7 @@ div.files.attachment-carousel {
 	--carousel-selected: #333;
 	display: flow-root;
 	box-sizing: border-box;
-	width: 360px;
+	width: 468px;
 	max-width: 100%;
 	margin: 4px 0 8px;
 }
@@ -101,7 +101,8 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 
 .attachment-carousel-controls {
 	clear: both;
-	margin-top: 10px;
+	justify-content: center;
+	margin-top: 6px;
 	font-size: 14px;
 }
 
@@ -119,21 +120,28 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 	cursor: pointer;
 }
 
-.attachment-carousel-controls button {
-	padding: 8px 12px;
-	white-space: nowrap;
+.attachment-carousel-controls > button {
+	display: grid;
+	place-items: center;
+	flex: 0 0 44px;
+	width: 44px;
+	height: 44px;
+	padding: 8px;
 }
 
-.attachment-carousel-controls i.fa {
-	margin: 0;
-	font-size: 18px;
+.attachment-carousel-chevron {
+	width: 9px;
+	height: 9px;
+	border-top: 3px solid currentColor;
+	border-right: 3px solid currentColor;
+	transform: translateX(-2px) rotate(45deg);
 }
 
-.attachment-carousel-navigation-label {
-	margin: 0 5px;
+.attachment-carousel-previous .attachment-carousel-chevron {
+	transform: translateX(2px) rotate(-135deg);
 }
 
-.attachment-carousel-icons .attachment-carousel-navigation-label {
+.attachment-carousel-counter {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -166,27 +174,25 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 	cursor: default;
 }
 
-.attachment-carousel-controls [role="status"] {
-	font-variant-numeric: tabular-nums;
-	text-align: center;
-	white-space: nowrap;
-}
-
 .attachment-carousel-thumbnails {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+	display: grid;
+	grid-template-columns: repeat(var(--attachment-carousel-columns, 5), minmax(44px, 1fr));
+	flex: 0 1 auto;
 	box-sizing: border-box;
-	width: 100%;
+	width: calc(var(--attachment-carousel-columns, 5) * 72px + 4px);
+	min-width: 0;
 	max-width: 364px;
 	gap: 8px;
 	padding: 6px;
-	margin: 6px auto 8px;
+	margin: 0;
+	overflow-x: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--carousel-border) transparent;
 }
 
 .attachment-carousel button.attachment-carousel-thumbnail {
 	position: relative;
-	flex: 0 0 calc((100% - 32px) / 5);
+	width: 100%;
 	max-width: 64px;
 	aspect-ratio: 1;
 	height: auto;
@@ -348,6 +354,13 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 
 .attachment-carousel [data-carousel-ui][hidden] {
 	display: none;
+}
+
+/* Keep room for the text column at tablet widths. */
+@media (min-width: 768px) and (max-width: 899px) {
+	div.files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) {
+		width: 360px;
+	}
 }
 
 @media (max-width: 767px) {
