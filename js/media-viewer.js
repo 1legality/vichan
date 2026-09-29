@@ -322,9 +322,12 @@
 		rememberHistorySelection();
 		filename.textContent = item.label;
 		filename.href = item.url;
-		filename.download = item.label;
-		filename.title = 'Download ' + item.label;
-		filename.setAttribute('aria-label', 'Download ' + item.label);
+		var sameOrigin = new URL(item.url).origin === window.location.origin;
+		if (sameOrigin) filename.download = item.label;
+		else filename.removeAttribute('download');
+		var filenameAction = (sameOrigin ? 'Download ' : 'Open original: ') + item.label;
+		filename.title = filenameAction;
+		filename.setAttribute('aria-label', filenameAction);
 		message.textContent = 'Loading ' + item.type + '…';
 		message.hidden = false;
 		stage.setAttribute('aria-busy', 'true');
@@ -341,7 +344,8 @@
 		node.onerror = function() {
 			if (!current()) return;
 			node.hidden = true;
-			message.textContent = 'This media could not be loaded. Select the filename above to download it.';
+			message.textContent = 'This media could not be loaded. Select the filename above to ' +
+				(sameOrigin ? 'download it.' : 'open the original in a new tab.');
 			message.hidden = false;
 			stage.setAttribute('aria-busy', 'false');
 		};

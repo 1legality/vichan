@@ -21,7 +21,7 @@ $(function(){
 
   var toggle_gview = function(elem) {
     if (gallery_view) {
-      gallery_links(elem).each(function() { 
+      gallery_links(elem).each(function() {
         if (this.onclick == handle_click) return;
         this.oldonclick = this.onclick;
         this.onclick = handle_click;
