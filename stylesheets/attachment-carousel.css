@@ -281,11 +281,6 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 	object-fit: contain;
 }
 
-.attachment-carousel:not(.attachment-carousel-all) > .file > a.attachment-carousel-media:hover > .post-image {
-	outline: 2px solid currentColor;
-	outline-offset: 3px;
-}
-
 .attachment-carousel .full-image,
 .attachment-carousel video,
 .attachment-carousel audio {
@@ -356,6 +351,10 @@ div.files.attachment-carousel p.attachment-carousel-caption {
 .attachment-carousel-caption a,
 .attachment-carousel-caption a:visited {
 	color: var(--carousel-accent);
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > .file > a.attachment-carousel-media:hover + .attachment-carousel-caption a {
+	color: var(--carousel-selected);
 }
 
 .attachment-carousel-caption a:focus-visible {
