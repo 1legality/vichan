@@ -8,9 +8,17 @@ div.files.attachment-carousel {
 	--carousel-selected: #333;
 	display: flow-root;
 	box-sizing: border-box;
-	width: 468px;
+	width: 494px;
 	max-width: 100%;
 	margin: 4px 0 8px;
+}
+
+/* One shared surface makes the media, filename and navigation read as a gallery. */
+div.files.attachment-carousel:not(.attachment-carousel-single) {
+	padding: var(--attachment-card-padding, 12px);
+	border: 1px solid var(--carousel-border);
+	border-radius: 8px;
+	background: var(--carousel-surface);
 }
 
 div.files.attachment-carousel-expanded,
@@ -24,6 +32,8 @@ div.files.attachment-carousel-single:not(.attachment-carousel-expanded) {
 
 /* Keep each post's text beside its own media without changing the legacy DOM. */
 div.post.attachment-post {
+	--attachment-card-padding: 12px;
+	--attachment-header-height: 44px;
 	/* Preserve the line spacing of the separator after each reply. */
 	display: inline-block;
 	width: fit-content;
@@ -93,10 +103,13 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 }
 
 .attachment-carousel-header {
-	min-height: 44px;
-	margin-bottom: 8px;
-	font-size: 14px;
+	min-height: var(--attachment-header-height, 44px);
+	margin-bottom: 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--carousel-border);
+	font-size: inherit;
 	font-weight: 600;
+	line-height: 1.5;
 }
 
 .attachment-carousel-controls {
@@ -360,6 +373,14 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 @media (min-width: 768px) and (max-width: 899px) {
 	div.files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) {
 		width: 360px;
+	}
+}
+
+@media (min-width: 768px) {
+	/* Align the reply's first line with the centered gallery heading. */
+	div.post.attachment-post > .files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
+		margin-top: calc(4px + 1px + var(--attachment-card-padding) + (var(--attachment-header-height) - 1.5em) / 2);
+		line-height: 1.5;
 	}
 }
 
