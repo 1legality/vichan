@@ -13,7 +13,9 @@
 	var modRoot = "{{ config.root }}" + (inMod ? "mod.php?/" : "");
 </script>
 {% if not nojavascript %}
-	<script type="text/javascript" src="{{ config.url_javascript }}?v={{ config.resource_version }} data-resource-version="{{ config.resource_version }}"></script>
+	{% if 'js/seasonal-events.js' in config.additional_javascript %}<link rel="stylesheet" href="{{ config.uri_stylesheets }}seasonal-events.css?v={{ config.resource_version }}">{% endif %}
+	{% if 'js/attachment-carousel.js' in config.additional_javascript %}<link rel="stylesheet" href="{{ config.uri_stylesheets }}attachment-carousel.css?v={{ config.resource_version }}">{% endif %}
+	<script type="text/javascript" src="{{ config.url_javascript }}?v={{ config.resource_version }}" data-resource-version="{{ config.resource_version }}"></script>
 	{% if not config.additional_javascript_compile %}
 	{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}?v={{ config.resource_version }}"></script>{% endfor %}
 	{% endif %}

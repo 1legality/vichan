@@ -53,6 +53,7 @@ span.quote {
 /* ===== LINKS ===== */
 a:link,
 a:visited,
+div.attachment-carousel-controls button,
 .intro a.email span.name {
     color: #9b32ff;
     text-decoration: none;
@@ -60,7 +61,8 @@ a:visited,
 }
 
 a:link:hover,
-a:visited:hover {
+a:visited:hover,
+div.attachment-carousel-controls button:enabled:hover {
     color: #39ff14;
     text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
     text-decoration: none;

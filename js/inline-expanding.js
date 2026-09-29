@@ -110,6 +110,8 @@ $(document).ready(function(){
 
 					if (thumb.className == 'hidden')
 						return false;
+					if (this.closest('.attachment-carousel-inactive') && !$(this).data('expanded'))
+						return false;
 					if (e.which == 2 || e.ctrlKey) //  open in new tab
 						return true;
 					if (!$(this).data('expanded')) {
@@ -209,7 +211,8 @@ $(document).ready(function(){
 
 		// allow to work with auto-reload.js, etc.
 		$(document).on('new_post', function(e, post) {
-			inline_expand_post.call(post);
+			$(post).each(inline_expand_post);
+			$(post).filter('.post.op').prev('.files').each(inline_expand_post);
 		});
 	} else {
 		inline_expand_post.call(document);

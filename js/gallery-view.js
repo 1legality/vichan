@@ -3,6 +3,15 @@ $(function(){
 
   var gallery_view = false;
 
+  var gallery_links = function(elem) {
+    elem = $(elem);
+    if (elem.is('.post.op')) elem = elem.add(elem.prev('.files'));
+    return $(elem).find('a').filter(function() {
+      return $(this).children('img.post-image:not(.deleted), video.post-image').length &&
+        /\.(jpe?g|png|gif|webp|avif|bmp|svg|webm|mp4|ogv)([?#]|$)|\/player\.php\?/i.test(this.href);
+    });
+  };
+
   $('hr:first').before('<div id="gallery-view" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
   $('#gallery-view a').html(gallery_view ? _("Disable gallery mode") : _("Enable gallery mode")).click(function() {
     gallery_view = !gallery_view;
@@ -12,20 +21,22 @@ $(function(){
 
   var toggle_gview = function(elem) {
     if (gallery_view) {
-      $(elem).find('img.post-image').parent().each(function() { 
+      gallery_links(elem).each(function() { 
+        if (this.onclick == handle_click) return;
         this.oldonclick = this.onclick;
         this.onclick = handle_click;
         $(this).attr('data-galid', Math.random());
       });
     }
     else {
-      $(elem).find('img.post-image').parent().each(function() {
+      gallery_links(elem).each(function() {
         if (this.onclick == handle_click) this.onclick = this.oldonclick;
+        $(this).removeAttr('data-galid');
       });
     }
   };
 
-  $(document).on('new_post', toggle_gview);
+  $(document).on('new_post', function(e, post) { toggle_gview(post); });
 
   var gallery_opened = false;
 
@@ -46,6 +57,7 @@ $(function(){
     gallery_opened = true;
 
     handler = $("<div id='alert_handler'></div>").hide().appendTo('body').css('text-align', 'left');
+    handler.css('visibility', 'visible');
 
     $("<div id='alert_background'></div>").click(close_gallery).appendTo(handler);
 
@@ -57,8 +69,8 @@ $(function(){
       close_gallery();
     });
 
-    $('img.post-image').parent().each(function() {
-      var thumb = $(this).find('img').attr('src');
+    gallery_links(document).each(function() {
+      var thumb = $(this).find('img').attr('src') || $(this).find('video').attr('poster');
 
       var i = $('<img>').appendTo(images);
       i.attr('src', thumb);
@@ -97,6 +109,9 @@ $(function(){
 
     var thumb = $('#gallery_images [data-galid-th="'+a+'"]');
     var elem = $('a[data-galid="'+a+'"]');
+
+    if (window.VichanAttachmentCarousel && elem.length) VichanAttachmentCarousel.select(elem[0]);
+    $('.files video, .files audio, #gallery_main video').each(function() { this.pause(); });
 
     thumb.addClass('active');
 
@@ -153,6 +168,7 @@ $(function(){
   };
 
   var close_gallery = function() {
+    active.find('video').each(function() { this.pause(); });
     $('body').css('overflow', 'auto');
 
     gallery_opened = false;

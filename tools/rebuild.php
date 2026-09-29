@@ -46,7 +46,7 @@ $twig->getCache()->clear();
 
 if(!$options['quiet'])
 	echo "Regenerating theme files...\n";
-rebuildThemes('all');
+\Vichan\Functions\Theme\rebuild_themes('all');
 
 if(!$options['quiet'])
 	echo "Generating Javascript file...\n";
@@ -56,15 +56,15 @@ $main_js = $config['file_script'];
 
 $boards = listBoards();
 
-foreach($boards as &$board) {
-	if($options['board'] && $board['uri'] != $options['board'])
+foreach($boards as $boardData) {
+	if($options['board'] && $boardData['uri'] != $options['board'])
 		continue;
 	
 	if(!$options['quiet'])
-		echo "Opening board /{$board['uri']}/...\n";
+		echo "Opening board /{$boardData['uri']}/...\n";
 	// Reset locale to global locale
 	$config['locale'] = $global_locale;
-	openBoard($board['uri']);
+	openBoard($boardData['uri']);
 	$config['try_smarter'] = false;
 	
 	if($config['file_script'] != $main_js) {

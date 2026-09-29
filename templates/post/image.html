@@ -6,6 +6,9 @@
 	{% endif %}
 	"
 	 target="_blank"
+	{% if post.file|extension in ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp', 'svg'] and post.file|extension not in config.allowed_ext_files|default([]) and post.thumb != 'file' and post.modifiers['is_file'] != '1' %}
+		 data-seasonal-photo="{% if post.thumb == 'spoiler' %}spoiler{% else %}true{% endif %}"
+	{% endif %}
 	{% if post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension == 'webm' or post.file|extension == 'mp4' %}
 		 class="file"
 	{% endif %}

@@ -85,7 +85,7 @@ function build_context(array $config): Context {
 		},
 		CacheDriver::class => function($c) {
 			// Use the global for backwards compatibility.
-			return \cache::getCache();
+			return \Cache::getCache();
 		}
 	]);
 }
