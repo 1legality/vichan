@@ -398,8 +398,11 @@
 	}
 
 	function canZoom() {
-		return media && media.tagName === 'IMG' && !media.hidden && media.naturalWidth &&
-			(media.naturalWidth > stage.clientWidth + 1 || media.naturalHeight > stage.clientHeight + 1);
+		if (!media || media.tagName !== 'IMG' || media.hidden || !media.naturalWidth) return false;
+		var style = window.getComputedStyle(stage);
+		var width = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+		var height = stage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+		return media.naturalWidth > width + 1 || media.naturalHeight > height + 1;
 	}
 
 	function updateZoomAvailability() {

@@ -135,8 +135,10 @@ html.media-viewer-open {
 	position: relative;
 	display: grid;
 	place-items: center;
+	box-sizing: border-box;
 	min-width: 0;
 	min-height: 0;
+	padding: 16px;
 	overflow: auto;
 	overscroll-behavior: contain;
 	background: #09090d;
@@ -343,5 +345,11 @@ html.media-viewer-open {
 @media (max-height: 500px) {
 	.media-viewer-thumbnails {
 		--viewer-thumbnail-size: 44px;
+	}
+}
+
+@media (max-width: 600px), (max-height: 500px) {
+	.media-viewer-stage {
+		padding: 8px;
 	}
 }
