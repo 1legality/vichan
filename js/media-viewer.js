@@ -555,7 +555,7 @@
 			else if (e.key === 'Home') show(0);
 			else if (e.key === 'End') show(items.length - 1);
 			else return;
-			if (thumbnails.contains(e.target) && thumbnailButtons[index]) thumbnailButtons[index].focus({ preventScroll: true });
+			if (items.length > 1 && thumbnailButtons[index]) thumbnailButtons[index].focus({ preventScroll: true });
 			e.preventDefault();
 			e.stopPropagation();
 		});
