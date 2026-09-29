@@ -18,6 +18,60 @@ div.files.attachment-carousel-all {
 	width: auto;
 }
 
+div.files.attachment-carousel-single:not(.attachment-carousel-expanded) {
+	width: var(--attachment-single-width, 255px);
+}
+
+/* Keep each post's text beside its own media without changing the legacy DOM. */
+div.post.attachment-post {
+	display: flow-root;
+	width: fit-content;
+}
+
+div.post.attachment-post > .files.attachment-carousel,
+div.files.attachment-op-files {
+	float: left;
+	margin-right: 20px;
+}
+
+div.post.attachment-post > div.body,
+div.post.attachment-op {
+	display: flow-root;
+	clear: none !important;
+	min-width: 18em;
+}
+
+div.post.attachment-post > div.body {
+	margin: 8px 0 0;
+	padding: 0 12px 4px 0;
+}
+
+div.post.attachment-post > div.body:empty {
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.attachment-op-clear {
+	display: block;
+	clear: both;
+	height: 0;
+}
+
+/* Thread expansion can insert its first reply before the clearing marker. */
+div.post.attachment-op + div.post.reply {
+	display: flow-root;
+	width: fit-content;
+	clear: both;
+}
+
+div.post.attachment-post > .files.attachment-carousel-all,
+div.post.attachment-post > .files.attachment-carousel-expanded,
+div.files.attachment-op-files.attachment-carousel-all,
+div.files.attachment-op-files.attachment-carousel-expanded {
+	float: none;
+}
+
 .attachment-carousel > .attachment-carousel-inactive {
 	display: none !important;
 }
@@ -184,6 +238,10 @@ div.files.attachment-carousel-all {
 	height: 255px;
 }
 
+.attachment-carousel.attachment-carousel-single:not(.attachment-carousel-expanded) > .file > a.attachment-carousel-media {
+	height: auto;
+}
+
 .attachment-carousel:not(.attachment-carousel-all) .post-image,
 .attachment-carousel:not(.attachment-carousel-all) .full-image {
 	float: none;
@@ -216,6 +274,11 @@ div.files.attachment-carousel-all {
 	object-fit: scale-down;
 }
 
+.attachment-carousel.attachment-carousel-single > .file > img.deleted {
+	height: auto !important;
+	width: auto;
+}
+
 .attachment-carousel .fileinfo,
 .attachment-carousel-caption {
 	clear: both;
@@ -229,6 +292,27 @@ div.files.attachment-carousel-all {
 
 .attachment-carousel:not(.attachment-carousel-all) > .file > .fileinfo {
 	display: none;
+}
+
+/* Single attachments have no Show all toggle; retain optional file actions. */
+.attachment-carousel-single > .file > .fileinfo:has(> span:not(:first-child):not(.unimportant), input, .hide-image-link, .show-image-link) {
+	display: block;
+	margin: 0 0 4px;
+}
+
+.attachment-carousel-single .fileinfo > span.unimportant,
+.attachment-carousel-single .fileinfo > span:first-child > a:not(.hide-image-link):not(.show-image-link) {
+	display: none;
+}
+
+.attachment-carousel-single .fileinfo > span:first-child {
+	font-size: 0;
+}
+
+.attachment-carousel-single .fileinfo > span:first-child small,
+.attachment-carousel-single .fileinfo .hide-image-link,
+.attachment-carousel-single .fileinfo .show-image-link {
+	font-size: 11px;
 }
 
 .attachment-carousel-caption {
@@ -257,6 +341,20 @@ div.files.attachment-carousel-all {
 
 .attachment-carousel [data-carousel-ui][hidden] {
 	display: none;
+}
+
+@media (max-width: 767px) {
+	div.post.attachment-post > .files.attachment-carousel,
+	div.files.attachment-op-files {
+		float: none;
+		margin-right: 0;
+	}
+
+	div.post.attachment-post > div.body,
+	div.post.attachment-op {
+		min-width: 0;
+		padding-left: 0;
+	}
 }
 
 @media (max-width: 480px) {

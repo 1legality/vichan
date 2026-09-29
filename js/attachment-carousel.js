@@ -42,10 +42,35 @@
 		else thumb.addEventListener('load', restore, { once: true });
 	}
 
+	function markPost(group) {
+		var op = group.nextElementSibling;
+		var hasOp = !!op && op.matches('.post.op');
+		group.classList.toggle('attachment-op-files', hasOp);
+		if (hasOp) {
+			op.classList.add('attachment-op');
+			var next = op.nextElementSibling;
+			if (!next || !next.matches('br.attachment-op-clear')) {
+				var clear = document.createElement('br');
+				clear.className = 'attachment-op-clear';
+				op.parentNode.insertBefore(clear, op.nextSibling);
+			}
+		} else if (group.parentElement && group.parentElement.matches('.post')) {
+			group.parentElement.classList.add('attachment-post');
+		}
+	}
+
 	function enhance(group) {
-		if (groups.has(group)) return;
 		var files = Array.prototype.filter.call(group.children, function(file) { return file.matches('div.file'); });
-		if (files.length < 2) return;
+		if (!files.length) return;
+		markPost(group);
+		if (groups.has(group)) return;
+		var single = files.length === 1;
+		group.classList.toggle('attachment-carousel-single', single);
+		if (single) {
+			var singleThumb = files[0].querySelector('img.post-image, video.post-image');
+			var width = singleThumb && (/^\d+(?:\.\d+)?px$/.test(singleThumb.style.width) ? parseFloat(singleThumb.style.width) : parseFloat(singleThumb.getAttribute('width')));
+			group.style.setProperty('--attachment-single-width', (width > 0 && isFinite(width) ? width : 255) + 'px');
+		}
 		var cloned = group.classList.contains('attachment-carousel');
 		// A post preview may clone markup, but not this carousel's state or listeners.
 		group.querySelectorAll('[data-carousel-ui], .attachment-carousel-controls').forEach(function(node) { node.remove(); });
@@ -133,11 +158,17 @@
 			} else {
 				file.setAttribute('data-carousel-width', file.style.width);
 			}
+			var mediaNode = null;
 			Array.prototype.forEach.call(file.children, function(node) {
-				if (node.matches('.post-image') || (node.matches('a') && node.querySelector('.post-image'))) node.classList.add('attachment-carousel-media');
+				if (node.matches('.post-image') || (node.matches('a') && node.querySelector('.post-image'))) {
+					node.classList.add('attachment-carousel-media');
+					if (!mediaNode) mediaNode = node;
+				}
 			});
 			var info = file.querySelector('.fileinfo');
-			if (info) file.appendChild(info);
+			// hide-images.js expects file metadata immediately before the media link.
+			if (info && mediaNode && info.nextElementSibling !== mediaNode) file.insertBefore(info, mediaNode);
+			if (single) return null;
 			var node = button(rail, '', 'Attachment ' + (index + 1) + ' of ' + files.length, 'attachment-carousel-thumbnail', function() { move(index); });
 			var previewGeneration = 0, previewSource = null;
 			function addPreview(url) {
@@ -235,19 +266,23 @@
 				file.classList.toggle('attachment-carousel-inactive', inactive);
 				file.hidden = inactive;
 				if (inactive) pause(file);
-				thumbnails[index].tabIndex = index === state.index ? 0 : -1;
-				if (index === state.index) thumbnails[index].setAttribute('aria-current', 'true');
-				else thumbnails[index].removeAttribute('aria-current');
+				if (thumbnails[index]) {
+					thumbnails[index].tabIndex = index === state.index ? 0 : -1;
+					if (index === state.index) thumbnails[index].setAttribute('aria-current', 'true');
+					else thumbnails[index].removeAttribute('aria-current');
+				}
 			});
 			var active = files[state.index];
-			if (controls.parentNode !== active) {
-				var info = active.querySelector('.fileinfo');
-				active.insertBefore(controls, info);
-				active.insertBefore(rail, info);
-				active.insertBefore(caption, controls);
+			if (caption.parentNode !== active) {
+				active.appendChild(caption);
+				if (!single) {
+					active.appendChild(controls);
+					active.appendChild(rail);
+				}
 			}
 			updateCaption(active);
-			controls.hidden = rail.hidden = caption.hidden = state.all;
+			controls.hidden = rail.hidden = single || state.all;
+			caption.hidden = state.all;
 			counter.textContent = (state.index + 1) + ' of ' + files.length;
 			previous.disabled = next.disabled = state.all;
 			toggle.textContent = state.all ? 'Show one' : 'Show all';
@@ -268,7 +303,7 @@
 		}
 
 		function keyboard(e, focusThumbnail) {
-			if (state.all || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+			if (single || state.all || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
 			if (e.key === 'ArrowLeft') move(state.index - 1);
 			else if (e.key === 'ArrowRight') move(state.index + 1);
 			else if (e.key === 'Home') move(0);
@@ -291,11 +326,13 @@
 			if (index !== -1) move(index, options);
 		} });
 		group.classList.add('attachment-carousel');
-		group.insertBefore(header, group.firstChild);
+		if (!single) group.insertBefore(header, group.firstChild);
 		render();
 		// Styles can only be resolved after the controls are in the document.
-		var iconStyle = getComputedStyle(previous.querySelector('.fa'), '::before');
-		group.classList.toggle('attachment-carousel-icons', iconStyle.content !== 'none' && iconStyle.content !== 'normal' && iconStyle.fontFamily.indexOf('FontAwesome') !== -1);
+		if (!single) {
+			var iconStyle = getComputedStyle(previous.querySelector('.fa'), '::before');
+			group.classList.toggle('attachment-carousel-icons', iconStyle.content !== 'none' && iconStyle.content !== 'normal' && iconStyle.fontFamily.indexOf('FontAwesome') !== -1);
+		}
 	}
 
 	function init(root) {
