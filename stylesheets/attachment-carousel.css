@@ -377,14 +377,41 @@ div.files.attachment-carousel p.attachment-carousel-caption {
 }
 
 @media (min-width: 768px) {
-	div.post.attachment-post > .files.attachment-carousel-single:not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
-		margin-top: calc(4px + 1px + var(--attachment-card-padding));
+	/* Match OP posts: keep the reply header and text beside the media. */
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) {
+		display: inline-grid;
+		grid-template-columns: max-content minmax(18em, auto);
+		grid-template-rows: auto auto 1fr;
+		column-gap: 20px;
 	}
 
-	/* Align the reply's first line with the centered gallery heading. */
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .files.attachment-carousel {
+		grid-column: 1;
+		grid-row: 1 / 4;
+		float: none;
+		margin-right: 0;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .intro {
+		grid-column: 2;
+		grid-row: 1;
+		margin-top: 4px;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .controls {
+		grid-column: 2;
+		grid-row: 2;
+	}
+
 	div.post.attachment-post > .files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
-		margin-top: calc(4px + 1px + var(--attachment-card-padding) + (var(--attachment-header-height) - 1.5em) / 2);
 		line-height: 1.5;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > div.body {
+		grid-column: 2;
+		grid-row: 3;
+		align-self: start;
+		margin-top: 8px;
 	}
 }
 
