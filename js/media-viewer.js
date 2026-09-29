@@ -10,6 +10,7 @@
 	var items = [], index = 0, media = null, generation = 0;
 	var thumbnailButtons = [], thumbnailCleanups = [], thumbnailGeneration = 0;
 	var origin = null, priorFocus = null, scroll = null, backdropStart = null, swipeStart = null;
+	var historyEntry = null, historySerial = 0, pendingHistoryBack = false, queuedOpen = null;
 
 	function httpURL(value, base) {
 		try {
@@ -62,6 +63,55 @@
 			});
 		});
 		return found;
+	}
+
+	function collectAll() {
+		var found = [];
+		document.querySelectorAll('.files').forEach(function(group) {
+			if (visible(group) && !group.closest('.post-hover, dialog')) found = found.concat(collect(group));
+		});
+		return found;
+	}
+
+	function viewerState(state) {
+		return state && state.__vichanMediaViewer;
+	}
+
+	function rememberHistorySelection() {
+		if (!historyEntry || !items[index]) return;
+		var current = viewerState(history.state);
+		if (!current || current.id !== historyEntry.id) return;
+		var item = items[index];
+		var postId = item.group.getAttribute('data-post-id');
+		var fileIndex = item.link.parentElement.getAttribute('data-file-index');
+		if (historyEntry.url === item.url && historyEntry.postId === postId && historyEntry.fileIndex === fileIndex) return;
+		historyEntry.url = item.url;
+		historyEntry.postId = postId;
+		historyEntry.fileIndex = fileIndex;
+		try { history.replaceState({ __vichanMediaViewer: historyEntry }, '', location.href); }
+		catch (e) { /* The viewer still works when session history is unavailable. */ }
+	}
+
+	function findHistoryLink(entry) {
+		var groups = document.querySelectorAll('.files');
+		for (var i = 0; i < groups.length; i++) {
+			if (entry.postId && groups[i].getAttribute('data-post-id') !== entry.postId) continue;
+			var found = collect(groups[i]);
+			for (var j = 0; j < found.length; j++) {
+				if (found[j].url === entry.url && (entry.fileIndex === null ||
+					found[j].link.parentElement.getAttribute('data-file-index') === entry.fileIndex)) return found[j].link;
+			}
+		}
+		return null;
+	}
+
+	function restoreHistory(entry) {
+		if (!entry || !entry.url) return false;
+		var link = findHistoryLink(entry);
+		if (!link) return false;
+		var selection = entry.all ? collectAll() : null;
+		if (selection && !selection.some(function(item) { return item.link === link; })) selection = null;
+		return open(link, selection, entry);
 	}
 
 	function element(tag, className, text) {
@@ -268,6 +318,7 @@
 		var token = generation;
 		pauseGroup(item.group);
 		if (window.VichanAttachmentCarousel) window.VichanAttachmentCarousel.select(item.link, { expand: false });
+		rememberHistorySelection();
 		filename.textContent = item.label;
 		filename.href = item.url;
 		filename.download = item.label;
@@ -399,6 +450,8 @@
 	function finish() {
 		// A deferred close event can arrive after the viewer has reopened.
 		if (dialog.open) return;
+		var current = viewerState(history.state);
+		var returnToPage = historyEntry && current && current.id === historyEntry.id;
 		var item = items[index];
 		var selected = item && item.link;
 		var group = item && item.group;
@@ -414,6 +467,11 @@
 		if (visible(target) && typeof target.focus === 'function') target.focus({ preventScroll: true });
 		if (scroll) window.scrollTo({ left: scroll.x, top: scroll.y, behavior: 'instant' });
 		origin = priorFocus = scroll = null;
+		historyEntry = null;
+		if (returnToPage) {
+			pendingHistoryBack = true;
+			history.back();
+		}
 	}
 
 	function build() {
@@ -502,10 +560,14 @@
 		dialog.classList.toggle('media-viewer-icons', iconStyle.content !== 'none' && iconStyle.content !== 'normal' && iconStyle.fontFamily.indexOf('FontAwesome') !== -1);
 	}
 
-	function open(link, selection) {
+	function open(link, selection, restoredEntry) {
 		if (!supported) return false;
 		var selected = attachment(link);
 		if (!selected) return false;
+		if (pendingHistoryBack) {
+			queuedOpen = { link: link, selection: selection };
+			return true;
+		}
 		var found = selection || collect(selected.group);
 		var position = found.findIndex(function(item) { return item.link === link; });
 		if (position === -1) return false;
@@ -518,22 +580,45 @@
 			document.documentElement.classList.add('media-viewer-open');
 		}
 		items = found;
+		historyEntry = restoredEntry || null;
 		buildThumbnails();
 		show(position);
+		if (!restoredEntry) {
+			var item = items[index];
+			var entry = {
+				id: Date.now() + '-' + ++historySerial,
+				url: item.url,
+				postId: item.group.getAttribute('data-post-id'),
+				fileIndex: item.link.parentElement.getAttribute('data-file-index'),
+				all: !!selection
+			};
+			try {
+				history.pushState({ __vichanMediaViewer: entry }, '', location.href);
+				historyEntry = entry;
+			} catch (e) { historyEntry = null; }
+		}
 		close.focus({ preventScroll: true });
 		return true;
 	}
 
 	function openAll() {
-		var found = [];
-		document.querySelectorAll('.files').forEach(function(group) {
-			if (visible(group) && !group.closest('.post-hover, dialog')) found = found.concat(collect(group));
-		});
+		var found = collectAll();
 		return found.length ? open(found[0].link, found) : false;
 	}
 
 	window.VichanMediaViewer = { open: open, openAll: openAll };
 	if (!supported) return;
+	window.addEventListener('popstate', function(e) {
+		pendingHistoryBack = false;
+		if (!restoreHistory(viewerState(e.state)) && dialog && dialog.open) {
+			dialog.close();
+		}
+		if (queuedOpen) {
+			var queued = queuedOpen;
+			queuedOpen = null;
+			open(queued.link, queued.selection);
+		}
+	});
 	// Capture before the legacy inline-expansion handlers. Modified clicks keep native behavior.
 	document.addEventListener('click', function(e) {
 		if (e.button !== 0 || !e.target.closest) return;
@@ -564,6 +649,7 @@
 
 	function ready() {
 		updateBulkControl();
+		restoreHistory(viewerState(history.state));
 		// The legacy control may be added after this script or by a refreshed thread.
 		new MutationObserver(function(mutations) {
 			if (mutations.some(function(mutation) { return mutation.addedNodes.length; })) updateBulkControl();
