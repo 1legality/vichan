@@ -1,0 +1,452 @@
+/* Enhanced attachments share one media frame and caption style. */
+div.files.attachment-carousel {
+	--carousel-surface: #eee;
+	--carousel-border: #aaa;
+	--carousel-text: inherit;
+	--carousel-muted: inherit;
+	--carousel-accent: #555;
+	--carousel-selected: #333;
+	display: flow-root;
+	box-sizing: border-box;
+	width: 360px;
+	max-width: 100%;
+	margin: 4px 0 8px;
+	/* Single files and galleries share the same restrained media frame. */
+	padding: var(--attachment-card-padding, 8px);
+	border: 1px solid var(--carousel-border);
+	border-radius: 4px;
+	background: transparent;
+}
+
+div.files.attachment-carousel-expanded,
+div.files.attachment-carousel-all {
+	width: auto;
+}
+
+div.files.attachment-carousel-single:not(.attachment-carousel-expanded) {
+	width: calc(var(--attachment-single-width, 255px) + 2 * var(--attachment-card-padding, 8px) + 2px);
+}
+
+/* Keep each post's text beside its own media without changing the legacy DOM. */
+div.post.attachment-post {
+	--attachment-card-padding: 8px;
+	--attachment-header-height: 44px;
+	/* Preserve the line spacing of the separator after each reply. */
+	display: inline-block;
+	width: fit-content;
+}
+
+div.post.attachment-post > .files.attachment-carousel,
+div.files.attachment-op-files {
+	float: left;
+	margin-right: 20px;
+}
+
+div.post.attachment-post > div.body,
+div.post.attachment-op {
+	display: flow-root;
+	clear: none !important;
+	min-width: 18em;
+}
+
+div.post.attachment-op {
+	padding-left: 0;
+}
+
+div.post.attachment-post > div.body {
+	margin: 8px 0 0;
+	padding: 0 12px 4px 0;
+}
+
+div.post.attachment-post > div.body:empty {
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.attachment-op-clear {
+	display: block;
+	clear: both;
+	height: 0;
+}
+
+/* Thread expansion can insert its first reply before the clearing marker. */
+div.post.attachment-op + div.post.reply {
+	display: flow-root;
+	width: fit-content;
+	clear: both;
+}
+
+/* Expanded replies already clear the OP; redundant breaks would add empty lines. */
+div.post.attachment-op + div.post.reply + br:not(.clear):not(.attachment-op-clear),
+div.post.attachment-op ~ div.post.reply ~ br.attachment-op-clear {
+	display: none;
+}
+
+div.post.attachment-post > .files.attachment-carousel-all,
+div.post.attachment-post > .files.attachment-carousel-expanded,
+div.files.attachment-op-files.attachment-carousel-all,
+div.files.attachment-op-files.attachment-carousel-expanded {
+	float: none;
+}
+
+.attachment-carousel > .attachment-carousel-inactive {
+	display: none !important;
+}
+
+.attachment-carousel-header,
+.attachment-carousel-controls {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	color: var(--carousel-text);
+}
+
+.attachment-carousel-header {
+	min-height: var(--attachment-header-height, 44px);
+	margin-bottom: 6px;
+	font-size: inherit;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.attachment-carousel-controls {
+	clear: both;
+	justify-content: center;
+	margin-top: 6px;
+	font-size: 14px;
+}
+
+.attachment-carousel button {
+	box-sizing: border-box;
+	min-width: 44px;
+	min-height: 44px;
+	margin: 0;
+	border: 1px solid var(--carousel-border);
+	border-radius: 6px;
+	background: var(--carousel-surface);
+	color: var(--carousel-text);
+	font: inherit;
+	letter-spacing: inherit;
+	cursor: pointer;
+}
+
+.attachment-carousel-controls > button {
+	display: grid;
+	place-items: center;
+	flex: 0 0 44px;
+	width: 44px;
+	height: 44px;
+	padding: 8px;
+}
+
+.attachment-carousel-chevron {
+	width: 9px;
+	height: 9px;
+	border-top: 3px solid currentColor;
+	border-right: 3px solid currentColor;
+	transform: translateX(-2px) rotate(45deg);
+}
+
+.attachment-carousel-previous .attachment-carousel-chevron {
+	transform: translateX(2px) rotate(-135deg);
+}
+
+.attachment-carousel-counter {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.attachment-carousel-header button {
+	padding: 8px;
+	border-color: transparent;
+	background: transparent;
+	color: var(--carousel-accent);
+	font-weight: 400;
+}
+
+.attachment-carousel button:enabled:hover {
+	border-color: var(--carousel-accent);
+}
+
+.attachment-carousel button:focus-visible {
+	outline: 2px solid var(--carousel-selected);
+	outline-offset: 3px;
+}
+
+.attachment-carousel button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.attachment-carousel-thumbnails {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	flex: 0 1 auto;
+	box-sizing: border-box;
+	width: 220px;
+	min-width: 0;
+	max-width: 220px;
+	gap: 8px;
+	padding: 6px;
+	margin: 0;
+	overflow-x: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--carousel-border) transparent;
+}
+
+.attachment-carousel button.attachment-carousel-thumbnail {
+	position: relative;
+	flex: 0 0 calc((100% - 16px) / 3);
+	max-width: 64px;
+	aspect-ratio: 1;
+	height: auto;
+	padding: 3px;
+	border: 2px solid var(--carousel-border);
+	overflow: hidden;
+}
+
+.attachment-carousel .attachment-carousel-thumbnail img {
+	display: block;
+	float: none;
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 3px;
+	object-fit: contain;
+	background: var(--carousel-image-background, var(--carousel-surface));
+}
+
+.attachment-carousel-preview ~ .attachment-carousel-thumbnail-number {
+	display: none;
+}
+
+.attachment-carousel button.attachment-carousel-thumbnail[aria-current="true"] {
+	border-color: var(--carousel-accent);
+	box-shadow: 0 0 0 1px var(--carousel-accent);
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > div.file {
+	float: none;
+	width: 100% !important;
+	max-width: 100%;
+	margin: 0;
+}
+
+/* Keep the original media link and inline expansion handlers intact. */
+.attachment-carousel:not(.attachment-carousel-all) > .file > a {
+	display: block;
+	float: none;
+	width: fit-content;
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+/* A steady thumbnail stage keeps navigation from jumping between file ratios. */
+.attachment-carousel:not(.attachment-carousel-all):not(.attachment-carousel-expanded) > .file > a.attachment-carousel-media {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 255px;
+}
+
+.attachment-carousel.attachment-carousel-single:not(.attachment-carousel-expanded) > .file > a.attachment-carousel-media {
+	height: auto;
+}
+
+.attachment-carousel:not(.attachment-carousel-all) .post-image,
+.attachment-carousel:not(.attachment-carousel-all) .full-image {
+	float: none;
+	box-sizing: border-box;
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	object-fit: contain;
+}
+
+.attachment-carousel .full-image,
+.attachment-carousel video,
+.attachment-carousel audio {
+	max-width: 100%;
+}
+
+.attachment-carousel-all .post-image {
+	box-sizing: border-box;
+	max-width: 100%;
+	height: auto !important;
+	margin: 0;
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > .file > img.deleted {
+	height: 255px !important;
+	width: 100%;
+	object-fit: scale-down;
+}
+
+.attachment-carousel.attachment-carousel-single > .file > img.deleted {
+	height: auto !important;
+	width: auto;
+}
+
+.attachment-carousel .fileinfo,
+.attachment-carousel-caption {
+	clear: both;
+	margin: 8px 0 0;
+	padding: 0;
+	overflow-wrap: anywhere;
+	color: var(--carousel-muted);
+	font-size: 11px;
+	line-height: 1.5;
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > .file > .fileinfo {
+	display: none;
+}
+
+/* Single attachments have no Show all toggle; retain optional file actions. */
+.attachment-carousel-single > .file > .fileinfo:has(> span:not(:first-child):not(.unimportant), input, .hide-image-link, .show-image-link) {
+	display: block;
+	margin: 0 0 4px;
+}
+
+.attachment-carousel-single .fileinfo > span.unimportant,
+.attachment-carousel-single .fileinfo > span:first-child > a:not(.hide-image-link):not(.show-image-link) {
+	display: none;
+}
+
+.attachment-carousel-single .fileinfo > span:first-child {
+	font-size: 0;
+}
+
+.attachment-carousel-single .fileinfo > span:first-child small,
+.attachment-carousel-single .fileinfo .hide-image-link,
+.attachment-carousel-single .fileinfo .show-image-link {
+	font-size: 11px;
+}
+
+/* Override reply paragraph defaults so OP and reply captions have identical spacing. */
+div.files.attachment-carousel p.attachment-carousel-caption {
+	margin: 6px 0 0;
+	padding: 0;
+	text-align: center;
+}
+
+.attachment-carousel-caption a,
+.attachment-carousel-caption a:visited {
+	color: var(--carousel-accent);
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > .file > a.attachment-carousel-media:hover + .attachment-carousel-caption a {
+	color: var(--carousel-selected);
+}
+
+.attachment-carousel-caption a:focus-visible {
+	outline: 2px solid var(--carousel-selected);
+	outline-offset: 3px;
+}
+
+.attachment-carousel .fileinfo .unimportant,
+.attachment-carousel .fileinfo .unimportant * {
+	font-size: inherit;
+}
+
+.attachment-carousel-all > div.file {
+	max-width: 100%;
+	margin-bottom: 12px;
+}
+
+.attachment-carousel [data-carousel-ui][hidden] {
+	display: none;
+}
+
+@media (min-width: 768px) {
+	/* Match OP posts: keep the reply header and text beside the media. */
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) {
+		display: inline-grid;
+		grid-template-columns: max-content minmax(18em, auto);
+		grid-template-rows: auto auto 1fr;
+		column-gap: 20px;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .files.attachment-carousel {
+		grid-column: 1;
+		grid-row: 1 / 4;
+		float: none;
+		margin-right: 0;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .intro {
+		grid-column: 2;
+		grid-row: 1;
+		margin-top: 4px;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > .controls {
+		grid-column: 2;
+		grid-row: 2;
+	}
+
+	div.post.attachment-post > .files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
+		line-height: 1.5;
+	}
+
+	div.post.reply.attachment-post:has(> .files.attachment-carousel:not(.attachment-carousel-all, .attachment-carousel-expanded)) > div.body {
+		grid-column: 2;
+		grid-row: 3;
+		align-self: start;
+		margin-top: 8px;
+	}
+}
+
+@media (max-width: 767px) {
+	div.post.attachment-post > .files.attachment-carousel,
+	div.files.attachment-op-files {
+		float: none;
+		margin-right: 0;
+	}
+
+	div.post.attachment-post > div.body,
+	div.post.attachment-op {
+		min-width: 0;
+		padding-left: 0;
+	}
+}
+
+@media (max-width: 480px) {
+	div.files.attachment-carousel {
+		/* Bound OP galleries even when legacy thread floats share the row. */
+		max-width: calc(100vw - 56px);
+	}
+}
+
+@media (max-width: 350px) {
+	.attachment-carousel-controls,
+	.attachment-carousel-thumbnails {
+		gap: 4px;
+	}
+
+	.attachment-carousel-thumbnails {
+		padding: 2px;
+	}
+
+	.attachment-carousel button.attachment-carousel-thumbnail {
+		flex-basis: calc((100% - 8px) / 3);
+	}
+}

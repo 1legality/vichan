@@ -23,6 +23,7 @@ if (active_page == 'ukko' || active_page == 'thread' || active_page == 'index') 
 			.text(_('Expand all images'))
 			.click(function() {
 				$('a img.post-image').each(function() {
+					if (this.closest('.attachment-carousel-inactive')) return;
 					// Don't expand YouTube embeds
 					if ($(this).parent().parent().hasClass('video-container')) {
 						return;

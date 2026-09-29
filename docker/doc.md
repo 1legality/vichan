@@ -1,5 +1,7 @@
 # Vichan Docker Setup
 
+For local development on macOS with Apple silicon and Apple's `container` CLI, see the [Mac development guide](development.md).
+
 The `php-fpm` process runs containerized.  
 The PHP application always uses `/var/www` as its work directory and home folder. If `/var/www` is bind mounted, you must adjust the path passed via FastCGI to `php-fpm`.
 

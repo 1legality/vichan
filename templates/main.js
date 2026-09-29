@@ -132,42 +132,18 @@ function changeStyle(styleName, link) {
 	{% endif %}
 	{% verbatim %}
 
-	if (!document.getElementById('stylesheet')) {
-		let s = document.createElement('link');
-		s.rel = 'stylesheet';
-		s.type = 'text/css';
-		s.id = 'stylesheet';
-		let x = document.getElementsByTagName('head')[0];
-		x.appendChild(s);
+	let stylesheet = document.getElementById('stylesheet');
+	if (!stylesheet) {
+		stylesheet = document.createElement('link');
+		stylesheet.rel = 'stylesheet';
+		stylesheet.type = 'text/css';
+		stylesheet.id = 'stylesheet';
+		document.head.appendChild(stylesheet);
 	}
 
-	let mainStylesheetElement = document.getElementById('stylesheet');
-	let userStylesheetElement = document.getElementById('stylesheet-user');
-
-	// Override main stylesheet with the user selected one.
-	if (!userStylesheetElement) {
-		userStylesheetElement = document.createElement('link');
-		userStylesheetElement.rel = 'stylesheet';
-		userStylesheetElement.media = 'none';
-		userStylesheetElement.type = 'text/css';
-		userStylesheetElement.id = 'stylesheet';
-		let x = document.getElementsByTagName('head')[0];
-		x.appendChild(userStylesheetElement);
-	}
-
-	// When the new one is loaded, disable the old one
-	userStylesheetElement.onload = function() {
-		this.media = 'all';
-		mainStylesheetElement.media = 'none';
-	}
-
-	let style = styles[styleName];
-	if (style !== '') {
-		// Add the version of the resource if the style is not the embedded one.
-		style += `?v=${resourceVersion}`;
-	}
-
-	document.getElementById('stylesheet').href = style;
+	// Yotsuba B uses only the base stylesheet; an empty href would request the page as CSS.
+	if (styles[styleName] === '') stylesheet.removeAttribute('href');
+	else stylesheet.href = styles[styleName] + '?v=' + resourceVersion;
 	selectedstyle = styleName;
 
 	if (document.getElementsByClassName('styles').length != 0) {

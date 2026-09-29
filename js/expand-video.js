@@ -97,6 +97,7 @@ function setupVideo(thumb, url) {
 
 	// Clicking on thumbnail expands video
 	thumb.addEventListener("click", function(e) {
+		if (thumb.hasAttribute('data-galid') || thumb.closest('.attachment-carousel-inactive')) return;
 		if (setting("videoexpand") && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
 			getVideo();
 			expanded = true;
@@ -122,8 +123,9 @@ function setupVideo(thumb, url) {
 			if (promise !== undefined) {
 				promise.then(_ => {
 				}).catch(_ => {
+					if (_.name !== 'NotAllowedError' || thumb.hasAttribute('data-galid') || thumb.closest('.attachment-carousel-inactive')) return;
 					video.muted = true;
-					video.play();
+					video.play().catch(function() {});
 				});
 			}
 			e.preventDefault();
@@ -131,6 +133,7 @@ function setupVideo(thumb, url) {
 	}, false);
 
 	function expand2() {
+		if (thumb.hasAttribute('data-galid') || thumb.closest('.attachment-carousel-inactive')) return;
 		video.style.maxWidth = "100%";
 		video.style.maxHeight = window.innerHeight + "px";
 		var bottom = video.getBoundingClientRect().bottom;
@@ -144,6 +147,7 @@ function setupVideo(thumb, url) {
 
 	// Hovering over thumbnail displays video
 	thumb.addEventListener("mouseover", function(e) {
+		if (thumb.hasAttribute('data-galid') || thumb.closest('.attachment-carousel-inactive')) return;
 		if (setting("videohover")) {
 			getVideo();
 			expanded = false;
@@ -176,8 +180,9 @@ function setupVideo(thumb, url) {
 			if (promise !== undefined) {
 				promise.then(_ => {
 				}).catch(_ => {
+					if (_.name !== 'NotAllowedError' || thumb.hasAttribute('data-galid') || thumb.closest('.attachment-carousel-inactive')) return;
 					video.muted = true;
-					video.play();
+					video.play().catch(function() {});
 				});
 			}
 		}

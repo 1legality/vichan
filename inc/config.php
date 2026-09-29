@@ -1111,6 +1111,9 @@
 	// Additional Javascript files to include on board index and thread pages. See js/ for available scripts.
 	$config['additional_javascript'][] = 'js/jquery.min.js';
 	$config['additional_javascript'][] = 'js/inline-expanding.js';
+	$config['additional_javascript'][] = 'js/seasonal-events.js';
+	$config['additional_javascript'][] = 'js/attachment-carousel.js';
+	$config['additional_javascript'][] = 'js/media-viewer.js';
 	// $config['additional_javascript'][] = 'js/local-time.js';
 
 	// Some scripts require jQuery. Check the comments in script files to see what's needed. When enabling
@@ -1136,7 +1139,7 @@
 
 	// Version number for main.js (or $config['url_javascript']).
 	// You can use this to bypass the user's browsers and CDN caches.
-	$config['resource_version'] = 0;
+	$config['resource_version'] = 41;
 
 	// Dispatch thumbnail loading and image configuration with JavaScript. It will need a certain javascript
 	// code to work.

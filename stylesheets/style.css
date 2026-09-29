@@ -8,6 +8,25 @@ body {
   padding-right: 4px;
 }
 
+/* Yotsuba B colors for the media viewer's header and navigation. */
+body .media-viewer {
+  --viewer-surface: #d6daf0;
+  --viewer-border: #b7c5d9;
+  --viewer-control: #eef2ff;
+  --viewer-text: #34345c;
+  --viewer-muted: #34345c;
+  --viewer-accent: #34345c;
+}
+
+body div.files.attachment-carousel {
+  --carousel-surface: #eef2ff;
+  --carousel-border: #b7c5d9;
+  --carousel-text: #34345c;
+  --carousel-muted: #34345c;
+  --carousel-accent: #34345c;
+  --carousel-selected: #34345c;
+}
+
 .hidden {
   display: none;
 }

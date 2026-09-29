@@ -1,0 +1,173 @@
+.seasonal-decoration,
+.seasonal-particles,
+.seasonal-particles * {
+	pointer-events: none;
+}
+
+.seasonal-photo-file {
+	position: relative;
+	overflow: visible;
+}
+
+.seasonal-photo-file > .seasonal-photo-link > .post-image,
+.seasonal-photo-file > .seasonal-photo-link > .full-image {
+	margin-top: var(--seasonal-hat-space);
+}
+
+.seasonal-photo-hat {
+	position: absolute;
+	z-index: 2;
+	display: block;
+	background-repeat: no-repeat;
+	background-size: contain;
+	transform-origin: 50% 90%;
+	filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35)) drop-shadow(0 2px 1px rgba(0, 0, 0, 0.28));
+}
+
+.seasonal-photo-hat.seasonal-party {
+	background-image: url('../static/seasonal/party-hat.png');
+	transform: rotate(-12deg);
+}
+
+.seasonal-title-accent {
+	margin-left: 0.4em;
+	font-size: 0.75em;
+}
+
+.seasonal-banner {
+	margin: 0.5em auto;
+	padding: 0.35em 0.7em;
+	width: fit-content;
+	max-width: 100%;
+	box-sizing: border-box;
+	border-block: 1px dashed currentColor;
+	font-size: 0.95em;
+	text-align: center;
+}
+
+.seasonal-banner-illustrated {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	max-width: min(100%, 48em);
+	text-align: left;
+}
+
+.seasonal-banner-image {
+	flex: 0 0 72px;
+	width: 72px;
+	height: 72px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.seasonal-banner-image.seasonal-party {
+	background-image: url('../static/seasonal/party-hat.png');
+}
+
+.seasonal-banner-image.seasonal-witch {
+	background-image: url('../static/seasonal/witch-hat.png');
+	filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+}
+
+.seasonal-banner-image.seasonal-santa {
+	background-image: url('../static/seasonal/santa-hat.png');
+}
+
+.seasonal-banner-image.seasonal-champagne {
+	background-image: url('../static/seasonal/champagne-glasses.png');
+}
+
+.seasonal-banner-image.seasonal-jester {
+	background-image: url('../static/seasonal/jester-hat.png');
+}
+
+.seasonal-banner-image.seasonal-fleur {
+	background-image: url('../static/seasonal/fleur-de-lys.png');
+}
+
+.seasonal-banner-image.seasonal-sober {
+	background-image: url('../static/seasonal/anti-cannabis.png');
+}
+
+.seasonal-bunting {
+	display: block;
+	width: min(320px, 90%);
+	height: 14px;
+	margin: 0.4em auto;
+	background: repeating-conic-gradient(from 135deg at 50% 0, #2461b3 0 90deg, transparent 0 360deg) 0 0 / 32px 14px,
+		repeating-conic-gradient(from 135deg at 50% 0, white 0 90deg, transparent 0 360deg) 16px 0 / 32px 14px;
+	border-top: 1px solid #2461b3;
+}
+
+.seasonal-settings {
+	clear: both;
+	margin: 1em;
+	font-size: 0.9em;
+	text-align: center;
+}
+
+.seasonal-options {
+	margin: 0.5em 0;
+}
+
+.seasonal-options select {
+	min-height: 32px;
+	font: inherit;
+}
+
+.seasonal-particles {
+	position: fixed;
+	inset: 0;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.seasonal-particles i {
+	position: absolute;
+	top: -12px;
+	display: block;
+	width: 4px;
+	height: 4px;
+	opacity: 0.55;
+}
+
+.seasonal-snow i {
+	left: 8px;
+	border-radius: 50%;
+	background: #eee;
+	box-shadow: 0 0 1px #52708a;
+	animation: seasonal-snowfall 24s linear infinite;
+	animation-delay: calc(var(--particle) * -3s);
+}
+
+.seasonal-snow i:nth-child(even) {
+	left: auto;
+	right: 8px;
+}
+
+.seasonal-confetti i {
+	left: calc(3% + var(--particle) * 6%);
+	height: 8px;
+	background: #bd4271;
+	animation: seasonal-confetti-fall 3s ease-out both;
+	animation-delay: calc(var(--particle) * 0.1s);
+}
+
+.seasonal-confetti i:nth-child(even) {
+	background: #c19738;
+}
+
+@keyframes seasonal-snowfall {
+	to { transform: translateY(calc(100vh + 16px)); }
+}
+
+@keyframes seasonal-confetti-fall {
+	to { transform: translateY(160px) rotate(260deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.seasonal-particles { display: none; }
+	.seasonal-particles i { animation: none; }
+}

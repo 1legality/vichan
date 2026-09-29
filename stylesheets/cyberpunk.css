@@ -332,6 +332,25 @@ div.report {
 }
 
 /* ===== POST IMAGES ===== */
+body .media-viewer {
+    --viewer-surface: #12121f;
+    --viewer-border: #493164;
+    --viewer-control: #291c40;
+    --viewer-text: #e5dcf5;
+    --viewer-muted: #a9a5b9;
+    --viewer-accent: #bf80ff;
+}
+
+body div.files.attachment-carousel {
+    --carousel-image-background: #808080;
+    --carousel-surface: #291c40;
+    --carousel-border: #493164;
+    --carousel-text: #e5dcf5;
+    --carousel-muted: #a9a5b9;
+    --carousel-accent: #bf80ff;
+    --carousel-selected: #39ff14;
+}
+
 img.post-image,
 .file a img {
     background: #808080;
