@@ -147,6 +147,7 @@ div.files.attachment-carousel-all {
 	border: 0;
 	border-radius: 3px;
 	object-fit: contain;
+	background: var(--carousel-image-background, transparent);
 }
 
 .attachment-carousel-preview ~ .attachment-carousel-thumbnail-number {
@@ -193,7 +194,6 @@ div.files.attachment-carousel-all {
 	padding: 0;
 	border: 0;
 	border-radius: 4px;
-	background: transparent;
 	object-fit: contain;
 }
 

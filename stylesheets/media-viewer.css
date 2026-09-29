@@ -157,8 +157,13 @@ html.media-viewer-open {
 }
 
 .media-viewer-image {
-	cursor: zoom-in;
+	cursor: default;
 	touch-action: pan-x pan-y pinch-zoom;
+	background: #808080;
+}
+
+.media-viewer-image.media-viewer-zoomable {
+	cursor: zoom-in;
 }
 
 .media-viewer-zoomed .media-viewer-stage {
@@ -231,6 +236,7 @@ html.media-viewer-open {
 	border: 0;
 	border-radius: 2px;
 	object-fit: contain;
+	background: #808080;
 }
 
 .media-viewer-preview ~ .media-viewer-thumbnail-number {

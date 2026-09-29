@@ -342,6 +342,7 @@ body .media-viewer {
 }
 
 body div.files.attachment-carousel {
+    --carousel-image-background: #808080;
     --carousel-surface: #291c40;
     --carousel-border: #493164;
     --carousel-text: #e5dcf5;

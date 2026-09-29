@@ -284,6 +284,7 @@
 			node.hidden = false;
 			message.hidden = true;
 			stage.setAttribute('aria-busy', 'false');
+			updateZoomAvailability();
 		}
 		node.onerror = function() {
 			if (!current()) return;
@@ -297,10 +298,6 @@
 			node.draggable = false;
 			node.hidden = true;
 			node.onload = loaded;
-			node.tabIndex = 0;
-			node.setAttribute('role', 'button');
-			node.setAttribute('aria-pressed', 'false');
-			node.setAttribute('aria-label', 'View at original size: ' + item.label);
 			var pointerStart = null;
 			node.addEventListener('pointerdown', function(e) {
 				pointerStart = e.pointerType === 'mouse' && e.button === 0 ? { x: e.clientX, y: e.clientY } : null;
@@ -349,8 +346,35 @@
 		}
 	}
 
+	function canZoom() {
+		return media && media.tagName === 'IMG' && !media.hidden && media.naturalWidth &&
+			(media.naturalWidth > stage.clientWidth + 1 || media.naturalHeight > stage.clientHeight + 1);
+	}
+
+	function updateZoomAvailability() {
+		if (!media || media.tagName !== 'IMG' || media.hidden) return;
+		var zoomable = !!canZoom();
+		media.classList.toggle('media-viewer-zoomable', zoomable);
+		if (zoomable) {
+			var expanded = dialog.classList.contains('media-viewer-zoomed');
+			media.tabIndex = 0;
+			media.setAttribute('role', 'button');
+			media.setAttribute('aria-pressed', String(expanded));
+			media.setAttribute('aria-label', (expanded ? 'Fit image to screen: ' : 'View at original size: ') + media.alt);
+		} else {
+			// A resize can make a previously enlarged image fit at its original size.
+			if (dialog.classList.contains('media-viewer-zoomed')) toggleZoom();
+			if (document.activeElement === media) (thumbnailButtons[index] || close).focus({ preventScroll: true });
+			media.removeAttribute('tabindex');
+			media.removeAttribute('role');
+			media.removeAttribute('aria-pressed');
+			media.removeAttribute('aria-label');
+		}
+	}
+
 	function toggleZoom() {
 		if (!media || media.tagName !== 'IMG' || media.hidden || !media.naturalWidth) return;
+		if (!dialog.classList.contains('media-viewer-zoomed') && !canZoom()) return;
 		var expanded = dialog.classList.toggle('media-viewer-zoomed');
 		media.setAttribute('aria-pressed', String(expanded));
 		media.setAttribute('aria-label', (expanded ? 'Fit image to screen: ' : 'View at original size: ') + media.alt);
@@ -409,6 +433,9 @@
 		message.setAttribute('role', 'status');
 		stage.appendChild(message);
 		panel.appendChild(stage);
+		// Recalculate after viewport, orientation, or dialog layout changes.
+		if (window.ResizeObserver) new ResizeObserver(updateZoomAvailability).observe(stage);
+		else window.addEventListener('resize', updateZoomAvailability);
 		var footer = element('footer', 'media-viewer-footer');
 		var toolbar = element('div', 'media-viewer-toolbar');
 		previous = control(toolbar, 'button', 'previous', 'Previous', 'chevron-left', function() { show(index - 1); });
