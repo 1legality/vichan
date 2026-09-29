@@ -113,6 +113,9 @@
 
 	function thumbnailSource(item) {
 		var file = item.link.parentElement;
+		var thumb = item.link.querySelector('img.post-image, video.post-image');
+		// A cached carousel preview must never reveal a hidden attachment.
+		if (thumb && thumb.classList.contains('hidden')) return { url: null };
 		var files = Array.prototype.filter.call(item.group.children, function(node) { return node.matches('.file'); });
 		var carousel = item.group.querySelector('.attachment-carousel-thumbnails');
 		var button = carousel && carousel.children[files.indexOf(file)];
@@ -123,9 +126,7 @@
 			var frozen = frozenPreview(canvas);
 			if (frozen) return { url: frozen };
 		}
-		var thumb = item.link.querySelector('img.post-image, video.post-image');
-		var source = file.getAttribute('data-carousel-preview-src');
-		if (source === null && thumb) source = thumb.getAttribute(thumb.tagName === 'VIDEO' ? 'poster' : 'src');
+		var source = thumb && thumb.getAttribute(thumb.tagName === 'VIDEO' ? 'poster' : 'src');
 		return { url: source, image: thumb && thumb.tagName === 'IMG' ? thumb : null };
 	}
 
@@ -143,7 +144,7 @@
 		}
 		function current() { return token === thumbnailGeneration && button.isConnected && dialog.open; }
 		function append(previewURL) {
-			if (!previewURL || !current()) return;
+			if (!previewURL || !current() || item.link.querySelector('.post-image.hidden')) return;
 			var preview = element('img', 'media-viewer-preview');
 			preview.alt = '';
 			preview.draggable = false;
@@ -255,12 +256,15 @@
 	}
 
 	function show(number) {
+		var restoreFocus = media && (media.contains(document.activeElement) || document.activeElement === stage);
 		clearMedia();
 		index = (number + items.length) % items.length;
 		var item = items[index];
 		previous.hidden = next.hidden = items.length < 2;
 		previous.parentElement.hidden = items.length < 2;
 		selectThumbnail();
+		// The old media is removed; keep keyboard navigation inside the dialog while loading.
+		if (restoreFocus) (thumbnailButtons[index] || close).focus({ preventScroll: true });
 		var token = generation;
 		pauseGroup(item.group);
 		if (window.VichanAttachmentCarousel) window.VichanAttachmentCarousel.select(item.link, { expand: false });

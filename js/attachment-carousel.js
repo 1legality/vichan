@@ -138,12 +138,7 @@
 			var info = file.querySelector('.fileinfo');
 			if (info) file.appendChild(info);
 			var node = button(rail, '', 'Attachment ' + (index + 1) + ' of ' + files.length, 'attachment-carousel-thumbnail', function() { move(index); });
-			// Reuse only the displayed thumbnail or video poster, never the original URL.
-			var source = file.getAttribute('data-carousel-preview-src');
-			if (source === null) {
-				source = thumb ? thumb.getAttribute(thumb.tagName === 'VIDEO' ? 'poster' : 'src') : '';
-				file.setAttribute('data-carousel-preview-src', source || '');
-			}
+			var previewGeneration = 0, previewSource = null;
 			function addPreview(url) {
 				var preview = ui('img', 'attachment-carousel-preview');
 				preview.alt = '';
@@ -153,12 +148,21 @@
 				preview.src = url;
 				node.insertBefore(preview, node.firstChild);
 			}
-			if (source) {
-				source = source.trim();
+			function syncPreview() {
+				// The live thumbnail is authoritative, including hide-images.js changes.
+				var source = thumb && !thumb.classList.contains('hidden') ? thumb.getAttribute(thumb.tagName === 'VIDEO' ? 'poster' : 'src') : '';
+				source = (source || '').trim();
+				file.setAttribute('data-carousel-preview-src', source);
+				if (source === previewSource) return;
+				previewSource = source;
+				var token = ++previewGeneration;
+				node.querySelectorAll('.attachment-carousel-preview').forEach(function(preview) { preview.remove(); });
+				if (!source) return;
 				if (/\.gif(?:[?#]|$)/i.test(source)) {
 					// Load GIFs off-DOM so the filmstrip never flashes an animated frame.
 					var still = new Image();
 					still.addEventListener('load', function() {
+						if (token !== previewGeneration || thumb.classList.contains('hidden')) return;
 						var canvas = frozenFrame(still);
 						if (!canvas) return;
 						try { addPreview(canvas.toDataURL('image/png')); }
@@ -169,6 +173,8 @@
 					addPreview(source);
 				}
 			}
+			syncPreview();
+			if (thumb) new MutationObserver(syncPreview).observe(thumb, { attributes: true, attributeFilter: ['src', 'poster', 'class'] });
 			var number = ui('span', 'attachment-carousel-thumbnail-number');
 			number.textContent = index + 1;
 			number.setAttribute('aria-hidden', 'true');
