@@ -1,4 +1,4 @@
-/* Only enhanced multi-attachment posts use the gallery layout. */
+/* Enhanced attachments share one media frame and caption style. */
 div.files.attachment-carousel {
 	--carousel-surface: #eee;
 	--carousel-border: #aaa;
@@ -8,17 +8,14 @@ div.files.attachment-carousel {
 	--carousel-selected: #333;
 	display: flow-root;
 	box-sizing: border-box;
-	width: 494px;
+	width: 486px;
 	max-width: 100%;
 	margin: 4px 0 8px;
-}
-
-/* One shared surface makes the media, filename and navigation read as a gallery. */
-div.files.attachment-carousel:not(.attachment-carousel-single) {
-	padding: var(--attachment-card-padding, 12px);
+	/* Single files and galleries share the same restrained media frame. */
+	padding: var(--attachment-card-padding, 8px);
 	border: 1px solid var(--carousel-border);
-	border-radius: 8px;
-	background: var(--carousel-surface);
+	border-radius: 4px;
+	background: transparent;
 }
 
 div.files.attachment-carousel-expanded,
@@ -27,12 +24,12 @@ div.files.attachment-carousel-all {
 }
 
 div.files.attachment-carousel-single:not(.attachment-carousel-expanded) {
-	width: var(--attachment-single-width, 255px);
+	width: calc(var(--attachment-single-width, 255px) + 2 * var(--attachment-card-padding, 8px) + 2px);
 }
 
 /* Keep each post's text beside its own media without changing the legacy DOM. */
 div.post.attachment-post {
-	--attachment-card-padding: 12px;
+	--attachment-card-padding: 8px;
 	--attachment-header-height: 44px;
 	/* Preserve the line spacing of the separator after each reply. */
 	display: inline-block;
@@ -50,6 +47,10 @@ div.post.attachment-op {
 	display: flow-root;
 	clear: none !important;
 	min-width: 18em;
+}
+
+div.post.attachment-op {
+	padding-left: 0;
 }
 
 div.post.attachment-post > div.body {
@@ -104,9 +105,7 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 
 .attachment-carousel-header {
 	min-height: var(--attachment-header-height, 44px);
-	margin-bottom: 12px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid var(--carousel-border);
+	margin-bottom: 6px;
 	font-size: inherit;
 	font-weight: 600;
 	line-height: 1.5;
@@ -341,7 +340,10 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 	font-size: 11px;
 }
 
-.attachment-carousel-caption {
+/* Override reply paragraph defaults so OP and reply captions have identical spacing. */
+div.files.attachment-carousel p.attachment-carousel-caption {
+	margin: 6px 0 0;
+	padding: 0;
 	text-align: center;
 }
 
@@ -377,6 +379,10 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 }
 
 @media (min-width: 768px) {
+	div.post.attachment-post > .files.attachment-carousel-single:not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
+		margin-top: calc(4px + 1px + var(--attachment-card-padding));
+	}
+
 	/* Align the reply's first line with the centered gallery heading. */
 	div.post.attachment-post > .files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
 		margin-top: calc(4px + 1px + var(--attachment-card-padding) + (var(--attachment-header-height) - 1.5em) / 2);
