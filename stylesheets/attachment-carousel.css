@@ -24,7 +24,8 @@ div.files.attachment-carousel-single:not(.attachment-carousel-expanded) {
 
 /* Keep each post's text beside its own media without changing the legacy DOM. */
 div.post.attachment-post {
-	display: flow-root;
+	/* Preserve the line spacing of the separator after each reply. */
+	display: inline-block;
 	width: fit-content;
 }
 
@@ -63,6 +64,12 @@ div.post.attachment-op + div.post.reply {
 	display: flow-root;
 	width: fit-content;
 	clear: both;
+}
+
+/* Expanded replies already clear the OP; redundant breaks would add empty lines. */
+div.post.attachment-op + div.post.reply + br:not(.clear):not(.attachment-op-clear),
+div.post.attachment-op ~ div.post.reply ~ br.attachment-op-clear {
+	display: none;
 }
 
 div.post.attachment-post > .files.attachment-carousel-all,
