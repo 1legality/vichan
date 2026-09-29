@@ -147,7 +147,7 @@ div.files.attachment-carousel-all {
 	border: 0;
 	border-radius: 3px;
 	object-fit: contain;
-	background: var(--carousel-image-background, transparent);
+	background: var(--carousel-image-background, var(--carousel-surface));
 }
 
 .attachment-carousel-preview ~ .attachment-carousel-thumbnail-number {
@@ -216,7 +216,8 @@ div.files.attachment-carousel-all {
 	object-fit: scale-down;
 }
 
-.attachment-carousel .fileinfo {
+.attachment-carousel .fileinfo,
+.attachment-carousel-caption {
 	clear: both;
 	margin: 8px 0 0;
 	padding: 0;
@@ -224,6 +225,24 @@ div.files.attachment-carousel-all {
 	color: var(--carousel-muted);
 	font-size: 11px;
 	line-height: 1.5;
+}
+
+.attachment-carousel:not(.attachment-carousel-all) > .file > .fileinfo {
+	display: none;
+}
+
+.attachment-carousel-caption {
+	text-align: center;
+}
+
+.attachment-carousel-caption a,
+.attachment-carousel-caption a:visited {
+	color: var(--carousel-accent);
+}
+
+.attachment-carousel-caption a:focus-visible {
+	outline: 2px solid var(--carousel-selected);
+	outline-offset: 3px;
 }
 
 .attachment-carousel .fileinfo .unimportant,

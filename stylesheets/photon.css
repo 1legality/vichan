@@ -8,6 +8,14 @@ body .media-viewer {
     --viewer-muted: #004a99;
     --viewer-accent: #006ab9;
 }
+body div.files.attachment-carousel {
+    --carousel-surface: #eee;
+    --carousel-border: #aaa;
+    --carousel-text: #002244;
+    --carousel-muted: #004a99;
+    --carousel-accent: #006ab9;
+    --carousel-selected: #006ab9;
+}
 
 .floatiframe{
 float:left;

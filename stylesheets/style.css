@@ -18,6 +18,15 @@ body .media-viewer {
   --viewer-accent: #34345c;
 }
 
+body div.files.attachment-carousel {
+  --carousel-surface: #eef2ff;
+  --carousel-border: #b7c5d9;
+  --carousel-text: #34345c;
+  --carousel-muted: #34345c;
+  --carousel-accent: #34345c;
+  --carousel-selected: #34345c;
+}
+
 .hidden {
   display: none;
 }

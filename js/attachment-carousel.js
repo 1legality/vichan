@@ -104,6 +104,7 @@
 		var rail = ui('div', 'attachment-carousel-thumbnails');
 		rail.setAttribute('role', 'group');
 		rail.setAttribute('aria-label', 'Choose attachment');
+		var caption = ui('p', 'attachment-carousel-caption');
 		var thumbnails = files.map(function(file, index) {
 			var thumb = file.querySelector('img.post-image, video.post-image');
 			var link = thumb && thumb.parentNode;
@@ -205,6 +206,25 @@
 			group.classList.toggle('attachment-carousel-expanded', !!files[state.index].querySelector('.full-image'));
 		}
 
+		function updateCaption(file) {
+			var info = file.querySelector('.fileinfo');
+			var source = info && (info.querySelector('a[download]') || info.querySelector('span:first-child > a[href]:not(.hide-image-link):not(.show-image-link)'));
+			caption.textContent = '';
+			if (!source) {
+				caption.textContent = file.querySelector('.post-image.deleted') ? 'Attachment deleted' : 'Attachment ' + (state.index + 1);
+				return;
+			}
+			// Keep original metadata and its links intact for other enhancements and Show all.
+			var filename = ui('a', 'attachment-carousel-filename');
+			['href', 'download', 'target', 'rel'].forEach(function(attribute) {
+				if (source.hasAttribute(attribute)) filename.setAttribute(attribute, source.getAttribute(attribute));
+			});
+			var spoiler = file.querySelector('[data-seasonal-photo="spoiler"]');
+			filename.textContent = (!spoiler && source.getAttribute('download')) || source.textContent.trim();
+			filename.title = filename.textContent;
+			caption.appendChild(filename);
+		}
+
 		function render() {
 			var focused = document.activeElement;
 			var keepFocus = controls.contains(focused) || rail.contains(focused);
@@ -224,8 +244,10 @@
 				var info = active.querySelector('.fileinfo');
 				active.insertBefore(controls, info);
 				active.insertBefore(rail, info);
+				active.insertBefore(caption, info);
 			}
-			controls.hidden = rail.hidden = state.all;
+			updateCaption(active);
+			controls.hidden = rail.hidden = caption.hidden = state.all;
 			counter.textContent = (state.index + 1) + ' of ' + files.length;
 			previous.disabled = next.disabled = state.all;
 			toggle.textContent = state.all ? 'Show one' : 'Show all';

@@ -1139,7 +1139,7 @@
 
 	// Version number for main.js (or $config['url_javascript']).
 	// You can use this to bypass the user's browsers and CDN caches.
-	$config['resource_version'] = 20;
+	$config['resource_version'] = 21;
 
 	// Dispatch thumbnail loading and image configuration with JavaScript. It will need a certain javascript
 	// code to work.

@@ -10,6 +10,14 @@ body .media-viewer {
 	--viewer-muted: #800000;
 	--viewer-accent: #800000;
 }
+body div.files.attachment-carousel {
+	--carousel-surface: #ffffee;
+	--carousel-border: #d9bfb7;
+	--carousel-text: #800000;
+	--carousel-muted: #800000;
+	--carousel-accent: #800000;
+	--carousel-selected: #800000;
+}
 a:link, a:visited, .intro a.email span.name {
 	color: #0000ff;
 }
