@@ -11,7 +11,7 @@
 	var thumbnailButtons = [], thumbnailCleanups = [], thumbnailGeneration = 0;
 	var origin = null, priorFocus = null, scroll = null, backdropStart = null, swipeStart = null;
 	var historyEntry = null, historySerial = 0, pendingHistoryBack = false, queuedOpen = null;
-	var keyboardFocus = true, pointerFocusTarget = null;
+	var keyboardFocus = true, pointerOpened = false, pointerFocusTarget = null;
 
 	function httpURL(value, base) {
 		try {
@@ -458,11 +458,11 @@
 		pointerFocusTarget = null;
 	}
 
-	function restoreFocus(target) {
+	function restoreFocus(target, hideRing) {
 		clearPointerFocus();
 		if (!visible(target) || typeof target.focus !== 'function') return;
 		// Keep the return position without inheriting a dialog's keyboard focus ring.
-		if (!keyboardFocus) {
+		if (hideRing) {
 			pointerFocusTarget = target;
 			target.classList.add('media-viewer-pointer-return');
 			target.addEventListener('blur', clearPointerFocus);
@@ -488,9 +488,10 @@
 		items = [];
 		backdropStart = null;
 		document.documentElement.classList.remove('media-viewer-open');
-		restoreFocus(target);
+		restoreFocus(target, pointerOpened || !keyboardFocus);
 		if (scroll) window.scrollTo({ left: scroll.x, top: scroll.y, behavior: 'instant' });
 		origin = priorFocus = scroll = null;
+		pointerOpened = false;
 		historyEntry = null;
 		if (returnToPage) {
 			pendingHistoryBack = true;
@@ -600,6 +601,7 @@
 			origin = link;
 			priorFocus = document.activeElement;
 			scroll = { x: window.scrollX, y: window.scrollY };
+			pointerOpened = !keyboardFocus;
 			try { dialog.showModal(); } catch (e) { return false; }
 			document.documentElement.classList.add('media-viewer-open');
 		}
