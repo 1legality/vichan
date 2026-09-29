@@ -8,7 +8,7 @@ div.files.attachment-carousel {
 	--carousel-selected: #333;
 	display: flow-root;
 	box-sizing: border-box;
-	width: 486px;
+	width: 360px;
 	max-width: 100%;
 	margin: 4px 0 8px;
 	/* Single files and galleries share the same restrained media frame. */
@@ -187,13 +187,14 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 }
 
 .attachment-carousel-thumbnails {
-	display: grid;
-	grid-template-columns: repeat(var(--attachment-carousel-columns, 5), minmax(44px, 1fr));
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 	flex: 0 1 auto;
 	box-sizing: border-box;
-	width: calc(var(--attachment-carousel-columns, 5) * 72px + 4px);
+	width: 220px;
 	min-width: 0;
-	max-width: 364px;
+	max-width: 220px;
 	gap: 8px;
 	padding: 6px;
 	margin: 0;
@@ -204,7 +205,7 @@ div.files.attachment-op-files.attachment-carousel-expanded {
 
 .attachment-carousel button.attachment-carousel-thumbnail {
 	position: relative;
-	width: 100%;
+	flex: 0 0 calc((100% - 16px) / 3);
 	max-width: 64px;
 	aspect-ratio: 1;
 	height: auto;
@@ -371,13 +372,6 @@ div.files.attachment-carousel p.attachment-carousel-caption {
 	display: none;
 }
 
-/* Keep room for the text column at tablet widths. */
-@media (min-width: 768px) and (max-width: 899px) {
-	div.files.attachment-carousel:not(.attachment-carousel-single):not(.attachment-carousel-all):not(.attachment-carousel-expanded) {
-		width: 360px;
-	}
-}
-
 @media (min-width: 768px) {
 	div.post.attachment-post > .files.attachment-carousel-single:not(.attachment-carousel-expanded) ~ div.body:not(:empty) {
 		margin-top: calc(4px + 1px + var(--attachment-card-padding));
@@ -408,5 +402,20 @@ div.files.attachment-carousel p.attachment-carousel-caption {
 	div.files.attachment-carousel {
 		/* Bound OP galleries even when legacy thread floats share the row. */
 		max-width: calc(100vw - 56px);
+	}
+}
+
+@media (max-width: 350px) {
+	.attachment-carousel-controls,
+	.attachment-carousel-thumbnails {
+		gap: 4px;
+	}
+
+	.attachment-carousel-thumbnails {
+		padding: 2px;
+	}
+
+	.attachment-carousel button.attachment-carousel-thumbnail {
+		flex-basis: calc((100% - 8px) / 3);
 	}
 }

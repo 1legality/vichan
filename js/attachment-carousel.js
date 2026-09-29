@@ -119,7 +119,6 @@
 		var rail = ui('div', 'attachment-carousel-thumbnails');
 		rail.setAttribute('role', 'group');
 		rail.setAttribute('aria-label', 'Choose attachment');
-		rail.style.setProperty('--attachment-carousel-columns', Math.min(files.length, 5));
 		controls.appendChild(rail);
 		var next = navigation('next', 'Next', function() { move(state.index + 1); });
 		var counter = ui('span', 'attachment-carousel-counter');
