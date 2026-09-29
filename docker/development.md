@@ -69,6 +69,25 @@ The initial board is then available at `http://127.0.0.1:9081/b/`. Keep this env
 
 ## Local data
 
+### Theme choices
+
+A restored configuration may expose only Cyberpunk in the Style selector. To enable the bundled alternatives locally, add this override after the restored configuration is loaded in `local-instances/apple/www/inc/instance-config.php`:
+
+```php
+$config['stylesheets'] = array(
+    'Cyberpunk' => 'cyberpunk.css',
+    'Yotsuba B' => '',
+    'Yotsuba' => 'yotsuba.css',
+    'Futaba' => 'futaba.css',
+    'Dark' => 'dark.css',
+    'Photon' => 'photon.css',
+);
+```
+
+Keep the restored `default_stylesheet` setting to retain Cyberpunk as the default. Rebuild the pages and JavaScript with `./tools/dev.sh rebuild`, then reload the page. Theme choices stay in the browser; the private instance configuration stays out of Git.
+
+### Persistent instance files
+
 The instance uses the Git-ignored `local-instances/apple/` directory:
 
 - `www/` contains instance configuration, generated files, uploads and dependencies; it is mounted writable at `/var/www`.
