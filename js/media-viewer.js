@@ -627,7 +627,7 @@
 				historyEntry = entry;
 			} catch (e) { historyEntry = null; }
 		}
-		close.focus({ preventScroll: true });
+		restoreFocus(close, !keyboardFocus);
 		return true;
 	}
 

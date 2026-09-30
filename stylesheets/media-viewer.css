@@ -107,7 +107,8 @@ html.media-viewer-open {
 	cursor: default;
 }
 
-.media-viewer .media-viewer-close {
+.media-viewer .media-viewer-close,
+.media-viewer .media-viewer-close:enabled:hover {
 	flex: 0 0 auto;
 	border-color: transparent;
 	background: transparent;
